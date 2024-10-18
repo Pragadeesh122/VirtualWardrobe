@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "970373802845",
+    "project_id": "virtualwardrobe-1e2a1",
+    "storage_bucket": "virtualwardrobe-1e2a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970373802845:android:2baf6db1ed5d60ef1096b4",
+        "android_client_info": {
+          "package_name": "com.pragadeesh.virtualwardrobe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "970373802845-vofrp84v9krnqopsqe8a3cb4cbfaajj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWzAcB0FdCeSvf0xg-KwbBUEH1GAI-E0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "970373802845-vofrp84v9krnqopsqe8a3cb4cbfaajj2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "970373802845-bbsja4ekg2r7saoooebli8c97qrnfp25.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pragadeesh.virtualwardrobe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

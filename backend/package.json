@@ -5,7 +5,10 @@
   "license": "MIT",
   "dependencies": {
     "@types/express": "^5.0.0",
+    "ai-digest": "^1.0.7",
     "express": "^4.21.1",
+    "firebase-admin": "^12.6.0",
+    "react-native-dotenv": "^3.4.11",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
   }
