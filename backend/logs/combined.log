@@ -1,0 +1,110 @@
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T00:18:05.223Z"}
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T00:18:05.717Z"}
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/login","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T00:18:09.591Z"}
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/register","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T00:18:14.192Z"}
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T03:36:22.083Z"}
+{"level":"info","message":{"body":{},"ip":"::1","method":"GET","path":"/","query":{},"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"},"timestamp":"2024-10-23T03:36:24.741Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28","username":"pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T03:50:30.355Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":500},"timestamp":"2024-10-23T03:50:30.977Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28","username":"pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T03:56:28.053Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":500},"timestamp":"2024-10-23T03:56:28.401Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28","username":"pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T03:57:12.414Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":500},"timestamp":"2024-10-23T03:57:12.943Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:02:27.360Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:02:28.261Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:04:50.437Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:04:51.089Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:12:20.625Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:12:21.365Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"pragan28","userName":"pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:15:27.802Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":400},"timestamp":"2024-10-23T04:15:27.815Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Pragan28!","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:16:27.444Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:16:28.149Z"}
+{"level":"info","message":{"body":{"email":"whatever@gmail.com","password":"Pragan28!","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:17:29.683Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:17:30.414Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!","userName":"Pragadeesh"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:24:05.226Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T04:24:05.871Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:46:51.526Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:46:51.880Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:47:37.040Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:47:37.314Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:51:16.957Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:51:17.203Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:52:14.689Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:52:14.980Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:52:36.581Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:52:36.773Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:53:56.937Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:53:57.137Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:54:29.187Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T04:54:29.398Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:57:57.467Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:57:57.604Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:58:07.487Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:58:07.557Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:58:26.340Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:58:26.408Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:58:28.608Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:58:28.635Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:58:53.562Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:58:53.632Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"pragan28"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T04:58:59.745Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T04:58:59.814Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!","userName":"PraganVS"},"ip":"::1","method":"POST","path":"/auth/register","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:00:33.157Z"}
+{"level":"info","message":{"method":"POST","path":"/register","statusCode":201},"timestamp":"2024-10-23T05:00:34.184Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:01:10.761Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:01:10.839Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:01:48.907Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:01:48.980Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:02:38.544Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:02:38.628Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:03:05.696Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:03:05.772Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:03:25.119Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:03:25.191Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:04:48.925Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:04:49.019Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:04:54.339Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:04:54.409Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:05:36.225Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:05:36.341Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:07:20.821Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:07:20.914Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:07:22.521Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:07:22.551Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:07:23.173Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:07:23.216Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:07:23.888Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:07:23.916Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:09:04.046Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:09:04.144Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:09:29.957Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:09:30.057Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:09:37.012Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:09:37.081Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:09:41.039Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:09:41.080Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:10:53.526Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:10:53.620Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:10:57.002Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:10:57.035Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:11:56.185Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:11:56.264Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:11:57.265Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:11:57.293Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:17:11.040Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:17:11.127Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:17:19.144Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:17:19.218Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:19:39.454Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":401},"timestamp":"2024-10-23T05:19:39.604Z"}
+{"level":"info","message":{"body":{"email":"praganmini189@gmail.com","password":"Pragan28!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:20:47.393Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T05:20:48.067Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:21:48.904Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T05:21:49.262Z"}
+{"level":"info","message":{"body":{"email":"","password":""},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:22:58.181Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":400},"timestamp":"2024-10-23T05:22:58.185Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:23:34.946Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T05:23:35.269Z"}
+{"level":"info","message":{"body":{"email":"pragan189@gmail.com","password":"Testing12!"},"ip":"::1","method":"POST","path":"/auth/login","query":{},"userAgent":"Expo/2.31.6 CFNetwork/1568.100.1 Darwin/24.0.0"},"timestamp":"2024-10-23T05:26:10.559Z"}
+{"level":"info","message":{"method":"POST","path":"/login","statusCode":200},"timestamp":"2024-10-23T05:26:11.197Z"}
