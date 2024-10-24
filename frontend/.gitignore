@@ -12,6 +12,7 @@ web-build/
 google-services.json
 GoogleService-Info.plist
 .env
+codebase.md
 
 # macOS
 .DS_Store

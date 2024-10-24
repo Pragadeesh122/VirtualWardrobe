@@ -1,4 +1,5 @@
 import {userLogin} from "@/app/services/auth";
+import {useAuth} from "@/context/authContext";
 import {Link, router} from "expo-router";
 import {useState} from "react";
 import {
@@ -10,13 +11,14 @@ import {
 } from "react-native";
 
 export default function Login() {
+  const {login} = useAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleLogin() {
     setLoading(true);
-    const response = await userLogin(email, password);
+    const response = await userLogin(email, password, login);
     if (response) {
       router.push("/");
     }
@@ -70,6 +72,7 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 10,
+    borderRadius: 5,
     paddingHorizontal: 10,
   },
   button: {
