@@ -1,57 +1,93 @@
-import React, {useState} from "react";
-import {ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, {useState, useEffect} from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+} from "react-native";
 import {ThemedText} from "@/components/ThemedText";
 import {ThemedView} from "@/components/ThemedView";
+import {Ionicons} from "@expo/vector-icons";
+import axios from "axios";
+import {fetchWardrobe} from "@/app/services/uplaodFile";
+import {useAuth} from "@/context/authContext";
 
-// Define a type for the wardrobe
-type Wardrobe = {
-  [category: string]: string[];
+type ClothItem = {
+  uri: string;
+  clothName: string;
+  clothType: string;
 };
 
-// Use the type for MOCK_WARDROBE
-const MOCK_WARDROBE: Wardrobe = {
-  "T-shirts": ["Black V-neck", "White Basic Tee", "Striped Polo"],
-  Pants: ["Blue Jeans", "Black Slacks", "Khaki Chinos"],
-  Dresses: ["Summer Floral", "Black Cocktail", "Maxi Dress"],
-  // Add more categories as needed
+type Wardrobe = {
+  [clothType: string]: ClothItem[];
 };
 
 export default function WardrobeScreen() {
-  const [selectedCategory, setSelectedCategory] = useState(
-    Object.keys(MOCK_WARDROBE)[0]
-  );
+  const [wardrobe, setWardrobe] = useState<Wardrobe>({});
+  const [expandedTypes, setExpandedTypes] = useState<string[]>([]);
+  const {user, token} = useAuth();
+
+  useEffect(() => {
+    async function fetchWardrobeData() {
+      const response = await fetchWardrobe(user?.uid!, token!);
+      const organizedWardrobe = response.reduce(
+        (acc: Wardrobe, item: ClothItem) => {
+          if (!acc[item.clothType]) {
+            acc[item.clothType] = [];
+          }
+          acc[item.clothType].push(item);
+          return acc;
+        },
+        {}
+      );
+
+      setWardrobe(organizedWardrobe);
+    }
+    fetchWardrobeData();
+  }, []);
+
+  const toggleAccordion = (clothType: string) => {
+    setExpandedTypes((prev) =>
+      prev.includes(clothType)
+        ? prev.filter((type) => type !== clothType)
+        : [...prev, clothType]
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>My Wardrobe</ThemedText>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoryScroll}>
-        {Object.keys(MOCK_WARDROBE).map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.categoryTab,
-              selectedCategory === category && styles.selectedCategoryTab,
-            ]}
-            onPress={() => setSelectedCategory(category)}>
-            <ThemedText
-              style={[
-                styles.categoryTabText,
-                selectedCategory === category && styles.selectedCategoryTabText,
-              ]}>
-              {category} ({MOCK_WARDROBE[category as keyof Wardrobe].length})
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      <ScrollView style={styles.itemsContainer}>
-        {MOCK_WARDROBE[selectedCategory].map((item, index) => (
-          <View key={index} style={styles.itemCard}>
-            <ThemedText style={styles.itemName}>{item}</ThemedText>
+      <ScrollView style={styles.accordionContainer}>
+        {Object.entries(wardrobe).map(([clothType, items]) => (
+          <View key={clothType} style={styles.accordionItem}>
+            <TouchableOpacity
+              style={styles.accordionHeader}
+              onPress={() => toggleAccordion(clothType)}>
+              <ThemedText style={styles.accordionTitle}>{clothType}</ThemedText>
+              <Ionicons
+                name={
+                  expandedTypes.includes(clothType)
+                    ? "chevron-up"
+                    : "chevron-down"
+                }
+                size={24}
+                color='#333'
+              />
+            </TouchableOpacity>
+            {expandedTypes.includes(clothType) && (
+              <View style={styles.accordionContent}>
+                {items.map((item, index) => (
+                  <View key={index} style={styles.clothItem}>
+                    <Image source={{uri: item.uri}} style={styles.clothImage} />
+                    <ThemedText style={styles.clothName}>
+                      {item.clothName}
+                    </ThemedText>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         ))}
       </ScrollView>
@@ -70,44 +106,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  categoryScroll: {
-    flexGrow: 0,
-    marginBottom: 20,
-  },
-  categoryTab: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginRight: 10,
-    borderRadius: 20,
-    backgroundColor: "#f5f5f5",
-  },
-  selectedCategoryTab: {
-    backgroundColor: "#007AFF",
-  },
-  categoryTabText: {
-    color: "#333",
-  },
-  selectedCategoryTabText: {
-    color: "#fff",
-  },
-  itemsContainer: {
+  accordionContainer: {
     flex: 1,
   },
-  itemCard: {
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 8,
+  accordionItem: {
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "#f5f5f5",
   },
-  itemName: {
+  accordionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#e0e0e0",
+  },
+  accordionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  accordionContent: {
+    padding: 15,
+  },
+  clothItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  clothImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  clothName: {
     fontSize: 16,
   },
 });

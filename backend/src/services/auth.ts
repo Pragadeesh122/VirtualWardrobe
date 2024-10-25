@@ -12,12 +12,6 @@ dotenv.config();
 export const authService = {
   async register(data: RegisterData): Promise<RegisterResponse> {
     // Create user in Firebase Authentication
-    const userRecord = await auth.createUser({
-      email: data.email,
-      password: data.password,
-      displayName: data.userName,
-    });
-
     const userExists = await db
       .collection("userProfiles")
       .doc(data.email)
@@ -26,6 +20,11 @@ export const authService = {
     if (userExists.exists) {
       throw new Error("User already exists");
     }
+    const userRecord = await auth.createUser({
+      email: data.email,
+      password: data.password,
+      displayName: data.userName,
+    });
 
     // Create user document in Firestore
     await db.collection("userProfiles").doc(userRecord.uid).set({
@@ -33,9 +32,6 @@ export const authService = {
       userName: data.userName,
       createdAt: new Date(),
     });
-
-    // Generate custom token
-    const token = await auth.createCustomToken(userRecord.uid);
 
     return {
       success: true,
@@ -49,11 +45,9 @@ export const authService = {
         credentials.password
       );
 
-      const userRecord = await auth.getUser(authResult.localId);
-
       const userProfile = await db
         .collection("userProfiles")
-        .doc(userRecord.uid)
+        .doc(authResult.localId)
         .get();
 
       if (!userProfile.exists) {
@@ -67,7 +61,7 @@ export const authService = {
         user: {
           userName: userData?.userName,
           email: userData?.email,
-          uid: userRecord.uid,
+          uid: authResult.localId,
         },
       };
     } catch (error) {

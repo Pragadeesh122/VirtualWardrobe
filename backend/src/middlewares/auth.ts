@@ -1,9 +1,10 @@
 import {Request, Response, NextFunction} from "express";
 import {auth} from "../config/firebase";
 import {ApiError} from "../utils/errors/ApiError";
+import {RequestWithUser} from "../types/API_request";
 
 export async function authenticate(
-  req: Request,
+  req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) {
@@ -12,17 +13,15 @@ export async function authenticate(
     if (!authHeader?.startsWith("Bearer ")) {
       throw new ApiError(401, "No token provided");
     }
-
+    console.log("control reachers here");
     const token = authHeader.split("Bearer ")[1];
     const decodedToken = await auth.verifyIdToken(token);
+    console.log("This is the decoded token:", decodedToken);
 
-    // Add user to request object
-    // req.user = {
-    //   uid: decodedToken.uid,
-    //   email: decodedToken.email!,
-    //   role: decodedToken.role,
-    // };
-
+    req.user = {
+      uid: decodedToken.uid,
+      email: decodedToken.email!,
+    };
     next();
   } catch (error) {
     next(new ApiError(401, "Invalid or expired token"));

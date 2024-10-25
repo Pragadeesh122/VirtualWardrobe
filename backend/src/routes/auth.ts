@@ -3,11 +3,6 @@ import {register, login} from "../controllers/auth";
 
 const authRouter = Router();
 
-authRouter.get("/test", async (req: Request, res: Response) => {
-  const {name} = req.query;
-  res.json({message: "Hello, world!"});
-});
-
 authRouter.post(
   "/register",
   (req: Request, res: Response, next: NextFunction) => {

@@ -1,12 +1,7 @@
 import axios from "axios";
-import {Platform} from "react-native";
-import {useAuth} from "@/context/authContext";
-import {UserProfile} from "@/types/auth";
 
-const API_URL =
-  Platform.OS === "android"
-    ? process.env.EXPO_PUBLIC_ANDROID_API_URL
-    : process.env.EXPO_PUBLIC_IOS_API_URL;
+import {UserProfile} from "@/types/auth";
+import {API_URL} from "../utils/API_url";
 
 export const userLogin = async (
   email: string,
