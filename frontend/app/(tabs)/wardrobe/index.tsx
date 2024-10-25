@@ -5,16 +5,17 @@ import {
   TouchableOpacity,
   View,
   Image,
+  RefreshControl,
 } from "react-native";
 import {ThemedText} from "@/components/ThemedText";
 import {ThemedView} from "@/components/ThemedView";
 import {Ionicons} from "@expo/vector-icons";
-import axios from "axios";
 import {fetchWardrobe} from "@/app/services/uplaodFile";
 import {useAuth} from "@/context/authContext";
+import {useIsFocused} from "@react-navigation/native";
 
 type ClothItem = {
-  uri: string;
+  imageUrl: string;
   clothName: string;
   clothType: string;
 };
@@ -26,10 +27,12 @@ type Wardrobe = {
 export default function WardrobeScreen() {
   const [wardrobe, setWardrobe] = useState<Wardrobe>({});
   const [expandedTypes, setExpandedTypes] = useState<string[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const {user, token} = useAuth();
+  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    async function fetchWardrobeData() {
+  const fetchWardrobeData = async () => {
+    try {
       const response = await fetchWardrobe(user?.uid!, token!);
       const organizedWardrobe = response.reduce(
         (acc: Wardrobe, item: ClothItem) => {
@@ -41,11 +44,23 @@ export default function WardrobeScreen() {
         },
         {}
       );
-
       setWardrobe(organizedWardrobe);
+    } catch (error) {
+      console.error("Error fetching wardrobe data:", error);
     }
-    fetchWardrobeData();
-  }, []);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchWardrobeData();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchWardrobeData();
+    }
+  }, [isFocused, user?.uid, token]);
 
   const toggleAccordion = (clothType: string) => {
     setExpandedTypes((prev) =>
@@ -58,8 +73,11 @@ export default function WardrobeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>My Wardrobe</ThemedText>
-
-      <ScrollView style={styles.accordionContainer}>
+      <ScrollView
+        style={styles.accordionContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {Object.entries(wardrobe).map(([clothType, items]) => (
           <View key={clothType} style={styles.accordionItem}>
             <TouchableOpacity
@@ -80,10 +98,15 @@ export default function WardrobeScreen() {
               <View style={styles.accordionContent}>
                 {items.map((item, index) => (
                   <View key={index} style={styles.clothItem}>
-                    <Image source={{uri: item.uri}} style={styles.clothImage} />
-                    <ThemedText style={styles.clothName}>
-                      {item.clothName}
-                    </ThemedText>
+                    <Image
+                      source={{uri: item.imageUrl}}
+                      style={styles.clothImage}
+                    />
+                    <View style={styles.clothNameContainer}>
+                      <ThemedText style={styles.clothName}>
+                        {item.clothName}
+                      </ThemedText>
+                    </View>
                   </View>
                 ))}
               </View>
@@ -128,19 +151,25 @@ const styles = StyleSheet.create({
   },
   accordionContent: {
     padding: 15,
+    flexDirection: "column",
   },
   clothItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    gap: 40,
+    marginBottom: 15,
   },
   clothImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+  },
+  clothNameContainer: {
+    flex: 1,
+    marginLeft: 15,
   },
   clothName: {
     fontSize: 16,
+    fontWeight: "600",
   },
 });

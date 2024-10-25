@@ -1,10 +1,13 @@
 import {Request, Response} from "express";
-import {wardrobeValidation} from "../validators/wardrobe";
+import {
+  wardrobeGetItemValidation,
+  wardrobeValidation,
+} from "../validators/wardrobe";
 import {wardrobeService} from "../services/wardrobe";
 import {ApiError} from "../utils/errors/ApiError";
 import {RequestWithUser} from "../types/API_request";
 
-export const uploadClothItem = async (req: RequestWithUser, res: Response) => {
+export async function uploadClothItem(req: RequestWithUser, res: Response) {
   try {
     if (!req.file) {
       throw new ApiError(400, "No image file provided");
@@ -54,4 +57,28 @@ export const uploadClothItem = async (req: RequestWithUser, res: Response) => {
       res.status(500).json({error: "An error occurred during upload"});
     }
   }
-};
+}
+
+export async function getItem(req: RequestWithUser, res: Response) {
+  try {
+    const data = {
+      userId: req.user?.uid!,
+    };
+
+    const validatedResult = wardrobeGetItemValidation.safeParse(data);
+
+    if (!validatedResult.success) {
+      throw new ApiError(400, "Invalid input data", true);
+    }
+
+    const response = await wardrobeService.getItem(validatedResult.data);
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new ApiError(400, error.message, true);
+    } else {
+      console.error("Get item error:", error);
+      res.status(500).json({error: "An error occurred during get item"});
+    }
+  }
+}

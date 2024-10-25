@@ -6,3 +6,7 @@ export const wardrobeValidation = {
     clothName: z.string().min(1, "Cloth name is required"),
   }),
 };
+
+export const wardrobeGetItemValidation = z.object({
+  userId: z.string().min(5, "userId is required to access the data"),
+});

@@ -6,6 +6,7 @@ import {TextInput, TouchableOpacity} from "react-native";
 import {useAuth} from "@/context/authContext";
 import * as ImagePicker from "expo-image-picker";
 import {uploadFile} from "@/app/services/uplaodFile";
+import {router} from "expo-router";
 
 const CLOTHING_CATEGORIES = [
   "T-shirts",
@@ -51,11 +52,20 @@ export default function UploadScreen() {
     if (selectedCategory && itemName && image && imageType) {
       if (token) {
         setIsUploading(true);
-        await uploadFile(itemName, selectedCategory, image, imageType, token);
+        const result = await uploadFile(
+          itemName,
+          selectedCategory,
+          image,
+          imageType,
+          token
+        );
         setSelectedCategory("");
         setItemName("");
         setImage(null);
         setIsUploading(false);
+        if (result.success) {
+          router.push("/(tabs)/wardrobe");
+        }
       }
     }
   };

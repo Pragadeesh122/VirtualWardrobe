@@ -46,7 +46,7 @@ export async function uploadFile(
   }
 }
 
-export async function fetchWardrobe(token: string, userID: string) {
+export async function fetchWardrobe(userID: string, token: string) {
   try {
     const response = await axios.post(
       `${API_URL}/wardrobe/getItem`,
@@ -54,9 +54,13 @@ export async function fetchWardrobe(token: string, userID: string) {
         userID,
       },
       {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Fetch wardrobe error:", error);

@@ -3,4 +3,5 @@ node_modules
 firebaseKey.json
 .env
 codebase.md
-logs
+logs/*
+logs/.*

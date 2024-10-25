@@ -23,3 +23,7 @@ export interface UploadClothItemRequest {
 export interface UploadClothItemResponse {
   success: boolean;
 }
+
+export interface GetItemRequest {
+  userId: string;
+}
