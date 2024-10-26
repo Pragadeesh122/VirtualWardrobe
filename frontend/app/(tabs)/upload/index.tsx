@@ -1,8 +1,6 @@
 import React, {useState} from "react";
-import {View, StyleSheet, ScrollView, Image} from "react-native";
-import {ThemedText} from "@/components/ThemedText";
-import {ThemedView} from "@/components/ThemedView";
-import {TextInput, TouchableOpacity} from "react-native";
+import {Image} from "react-native";
+import {ScrollView, YStack, Input, Button, Text, XStack} from "tamagui";
 import {useAuth} from "@/context/authContext";
 import * as ImagePicker from "expo-image-picker";
 import {uploadFile} from "@/app/services/uplaodFile";
@@ -70,171 +68,82 @@ export default function UploadScreen() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    router.replace("/login");
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <ThemedText style={styles.title}>Add New Item</ThemedText>
+    <ScrollView flex={1} padding='$4' paddingTop='$6'>
+      <XStack
+        justifyContent='space-between'
+        alignItems='center'
+        marginBottom='$4'>
+        <Text fontSize='$6' fontWeight='bold'>
+          Upload Clothing
+        </Text>
+        <Button
+          onPress={handleLogout}
+          size='$3'
+          backgroundColor='$red10'
+          color='white'>
+          Logout
+        </Button>
+      </XStack>
 
-        <ThemedText style={styles.sectionTitle}>Select Category:</ThemedText>
-        <View style={styles.categoryGrid}>
-          {CLOTHING_CATEGORIES.map((category) => (
-            <TouchableOpacity
-              key={category}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category && styles.selectedCategory,
-              ]}
-              onPress={() => setSelectedCategory(category)}>
-              <ThemedText
-                style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.selectedCategoryText,
-                ]}>
-                {category}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
+      <Button
+        onPress={pickImage}
+        marginBottom='$4'
+        backgroundColor='$gray3'
+        color='$gray11'>
+        Pick an image from camera roll
+      </Button>
 
-        <ThemedText style={styles.sectionTitle}>Item Name:</ThemedText>
-        <TextInput
-          style={styles.input}
-          value={itemName}
-          onChangeText={setItemName}
-          placeholder='Enter item name'
-          placeholderTextColor='#999'
+      {image && (
+        <Image
+          source={{uri: image}}
+          style={{
+            width: "100%",
+            height: 200,
+            borderRadius: 8,
+            marginBottom: 16,
+          }}
         />
+      )}
 
-        <ThemedText style={styles.sectionTitle}>Item Image:</ThemedText>
-        <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-          <ThemedText style={styles.imagePickerText}>
-            {image ? "Change Image" : "Upload Image"}
-          </ThemedText>
-        </TouchableOpacity>
-        {image && <Image source={{uri: image}} style={styles.imagePreview} />}
+      <Input
+        placeholder='Cloth Name'
+        value={itemName}
+        onChangeText={setItemName}
+        marginBottom='$4'
+      />
 
-        <TouchableOpacity
-          style={[
-            styles.uploadButton,
-            (!selectedCategory || !itemName || !image) &&
-              styles.uploadButtonDisabled,
-            isUploading && styles.uploadButtonUploading,
-          ]}
-          onPress={handleUpload}
-          disabled={!selectedCategory || !itemName || !image || isUploading}>
-          <ThemedText style={styles.uploadButtonText}>
-            {isUploading ? "Uploading..." : "Upload Item"}
-          </ThemedText>
-        </TouchableOpacity>
-      </ScrollView>
+      <Text fontSize='$5' fontWeight='600' marginBottom='$2'>
+        Select Category
+      </Text>
+      <XStack flexWrap='wrap' gap='$2'>
+        {CLOTHING_CATEGORIES.map((category) => (
+          <Button
+            key={category}
+            size='$2'
+            onPress={() => setSelectedCategory(category)}
+            backgroundColor={
+              selectedCategory === category ? "$blue10" : "$gray3"
+            }
+            color={selectedCategory === category ? "white" : "$gray11"}>
+            {category}
+          </Button>
+        ))}
+      </XStack>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={() => logout()}>
-        <ThemedText style={styles.logoutButtonText}>Logout</ThemedText>
-      </TouchableOpacity>
-    </ThemedView>
+      <Button
+        onPress={handleUpload}
+        disabled={!image || !itemName || !selectedCategory}
+        marginTop='$4'
+        backgroundColor='$blue10'
+        color='white'>
+        Upload
+      </Button>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  categoryGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  categoryButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#f5f5f5",
-    marginBottom: 8,
-  },
-  selectedCategory: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
-  },
-  categoryText: {
-    fontSize: 12,
-    color: "#333",
-  },
-  selectedCategoryText: {
-    color: "#fff",
-  },
-  input: {
-    width: "100%",
-    height: 36,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginTop: 4,
-    marginBottom: 16,
-    fontSize: 14,
-  },
-  imagePicker: {
-    backgroundColor: "#f0f0f0",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  imagePickerText: {
-    fontSize: 14,
-  },
-  imagePreview: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  uploadButton: {
-    backgroundColor: "#007AFF",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 16,
-  },
-  uploadButtonDisabled: {
-    backgroundColor: "#ccc",
-  },
-  uploadButtonUploading: {
-    backgroundColor: "#4DA6FF", // A lighter shade of blue
-  },
-  uploadButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  logoutButton: {
-    position: "absolute",
-    top: 40,
-    right: 16,
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-  },
-  logoutButtonText: {
-    fontSize: 12,
-    color: "#333",
-  },
-});

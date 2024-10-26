@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from "react";
+import {RefreshControl} from "react-native";
 import {
   ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+  YStack,
+  XStack,
   View,
   Image,
-  RefreshControl,
-} from "react-native";
-import {ThemedText} from "@/components/ThemedText";
-import {ThemedView} from "@/components/ThemedView";
+  Accordion,
+  Text,
+  styled,
+} from "tamagui";
 import {Ionicons} from "@expo/vector-icons";
 import {fetchWardrobe} from "@/app/services/uplaodFile";
 import {useAuth} from "@/context/authContext";
@@ -62,114 +63,62 @@ export default function WardrobeScreen() {
     }
   }, [isFocused, user?.uid, token]);
 
-  const toggleAccordion = (clothType: string) => {
-    setExpandedTypes((prev) =>
-      prev.includes(clothType)
-        ? prev.filter((type) => type !== clothType)
-        : [...prev, clothType]
-    );
-  };
-
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>My Wardrobe</ThemedText>
+    <YStack flex={1} padding='$4' paddingTop='$6'>
+      <Text fontSize='$6' fontWeight='bold' marginBottom='$4'>
+        My Wardrobe
+      </Text>
       <ScrollView
-        style={styles.accordionContainer}
+        flex={1}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {Object.entries(wardrobe).map(([clothType, items]) => (
-          <View key={clothType} style={styles.accordionItem}>
-            <TouchableOpacity
-              style={styles.accordionHeader}
-              onPress={() => toggleAccordion(clothType)}>
-              <ThemedText style={styles.accordionTitle}>{clothType}</ThemedText>
-              <Ionicons
-                name={
-                  expandedTypes.includes(clothType)
-                    ? "chevron-up"
-                    : "chevron-down"
-                }
-                size={24}
-                color='#333'
-              />
-            </TouchableOpacity>
-            {expandedTypes.includes(clothType) && (
-              <View style={styles.accordionContent}>
-                {items.map((item, index) => (
-                  <View key={index} style={styles.clothItem}>
-                    <Image
-                      source={{uri: item.imageUrl}}
-                      style={styles.clothImage}
-                    />
-                    <View style={styles.clothNameContainer}>
-                      <ThemedText style={styles.clothName}>
-                        {item.clothName}
-                      </ThemedText>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
+          <YStack key={clothType} space='$3'>
+            <Accordion type='multiple'>
+              <Accordion.Item value={clothType}>
+                <Accordion.Trigger
+                  flexDirection='row'
+                  justifyContent='space-between'
+                  alignItems='center'
+                  padding='$3'
+                  backgroundColor='$gray3'
+                  borderRadius='$2'>
+                  {({open}: {open: boolean}) => (
+                    <>
+                      <Text fontSize='$5' fontWeight='600'>
+                        {clothType}
+                      </Text>
+                      <Ionicons
+                        name={open ? "chevron-up" : "chevron-down"}
+                        size={24}
+                        color='$gray11'
+                      />
+                    </>
+                  )}
+                </Accordion.Trigger>
+                <Accordion.Content>
+                  <YStack space='$3' padding='$3'>
+                    {items.map((item, index) => (
+                      <XStack key={index} space='$4' alignItems='center'>
+                        <Image
+                          source={{uri: item.imageUrl}}
+                          width={100}
+                          height={100}
+                          borderRadius='$2'
+                        />
+                        <Text fontSize='$4' fontWeight='600'>
+                          {item.clothName}
+                        </Text>
+                      </XStack>
+                    ))}
+                  </YStack>
+                </Accordion.Content>
+              </Accordion.Item>
+            </Accordion>
+          </YStack>
         ))}
       </ScrollView>
-    </ThemedView>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 60,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  accordionContainer: {
-    flex: 1,
-  },
-  accordionItem: {
-    marginBottom: 10,
-    borderRadius: 8,
-    overflow: "hidden",
-    backgroundColor: "#f5f5f5",
-  },
-  accordionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#e0e0e0",
-  },
-  accordionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  accordionContent: {
-    padding: 15,
-    flexDirection: "column",
-  },
-  clothItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 40,
-    marginBottom: 15,
-  },
-  clothImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-  },
-  clothNameContainer: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  clothName: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

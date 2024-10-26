@@ -17,3 +17,4 @@ codebase.md
 # macOS
 .DS_Store
 expo-env.d.ts
+.tamagui

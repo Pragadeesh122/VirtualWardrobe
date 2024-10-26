@@ -1,16 +1,10 @@
-import {userLogin} from "@/app/services/auth";
+import React, {useState} from "react";
+import {YStack, Input, Button, Text} from "tamagui";
 import {useAuth} from "@/context/authContext";
-import {Link, router} from "expo-router";
-import {useState} from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import {router} from "expo-router";
+import {userLogin} from "@/app/services/auth";
 
-export default function Login() {
+export default function LoginScreen() {
   const {login} = useAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -26,67 +20,40 @@ export default function Login() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
+    <YStack
+      flex={1}
+      justifyContent='center'
+      alignItems='center'
+      padding='$4'
+      space='$4'>
+      <Text fontSize='$6' fontWeight='bold' marginBottom='$4'>
+        Login
+      </Text>
+      <Input
         placeholder='Email'
         value={email}
         onChangeText={setEmail}
-        keyboardType='email-address'
         autoCapitalize='none'
+        keyboardType='email-address'
+        width='100%'
       />
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder='Password'
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        width='100%'
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Link href='/(auth)/register'>
-          <Text style={styles.link}>Don't have an account? Register</Text>
-        </Link>
-      </TouchableOpacity>
-    </View>
+      <Button
+        onPress={handleLogin}
+        backgroundColor='$blue10'
+        color='white'
+        width='100%'>
+        Login
+      </Button>
+      <Text color='$blue10' onPress={() => router.push("/(auth)/register")}>
+        Don't have an account? Register
+      </Text>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: "white",
-    textAlign: "center",
-  },
-  link: {
-    color: "#007AFF",
-    marginTop: 10,
-  },
-});

@@ -1,13 +1,7 @@
 import {userRegister} from "@/app/services/auth";
-import {Link, Redirect, router} from "expo-router";
+import {Link, router} from "expo-router";
 import {useState} from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import {YStack, Input, Button, Text} from "tamagui";
 
 export default function Register() {
   const [email, setEmail] = useState<string>("");
@@ -17,92 +11,58 @@ export default function Register() {
 
   async function handleRegister() {
     setLoading(true);
-    const respone = await userRegister(username, email, password);
-    console.log(respone);
-    if (respone.success) {
+    const response = await userRegister(username, email, password);
+    console.log(response);
+    if (response.success) {
       router.push("/login");
     }
     setLoading(false);
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <TextInput
-        style={styles.input}
-        placeholder='text'
+    <YStack
+      flex={1}
+      justifyContent='center'
+      alignItems='center'
+      padding='$4'
+      space='$4'>
+      <Text fontSize='$6' fontWeight='bold' marginBottom='$4'>
+        Register
+      </Text>
+      <Input
+        placeholder='Username'
         value={username}
         onChangeText={setUsername}
-        keyboardType='default'
         autoCapitalize='none'
+        width='100%'
       />
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder='Email'
         value={email}
         onChangeText={setEmail}
         keyboardType='email-address'
         autoCapitalize='none'
+        width='100%'
       />
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder='Password'
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        width='100%'
       />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
+      <Button
         onPress={handleRegister}
-        disabled={loading}>
-        <Text style={styles.buttonText}>
-          {loading ? "Registering..." : "Register"}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Link href='/(auth)/login'>
-          {" "}
-          <Text style={styles.link}>Already have an account? Login</Text>
-        </Link>
-      </TouchableOpacity>
-    </View>
+        disabled={loading}
+        opacity={loading ? 0.5 : 1}
+        backgroundColor='$blue10'
+        color='white'
+        width='100%'>
+        {loading ? "Registering..." : "Register"}
+      </Button>
+      <Link href='/(auth)/login' asChild>
+        <Text color='$blue10'>Already have an account? Login</Text>
+      </Link>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  buttonDisabled: {
-    backgroundColor: "#A9A9A9", // This is a light gray color
-  },
-  buttonText: {
-    color: "white",
-    textAlign: "center",
-  },
-  link: {
-    color: "#007AFF",
-    marginTop: 10,
-  },
-});
