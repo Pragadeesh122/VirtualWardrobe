@@ -67,3 +67,36 @@ export async function fetchWardrobe(userID: string, token: string) {
     throw error;
   }
 }
+
+export const deleteClothItem = async (itemId: string, token: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/wardrobe/${itemId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    throw error;
+  }
+};
+
+export const updateClothItem = async (
+  itemId: string,
+  updates: {clothName: string},
+  token: string
+) => {
+  try {
+    const response = await axios.put(`${API_URL}/wardrobe/${itemId}`, updates, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating item:", error);
+    throw error;
+  }
+};

@@ -115,4 +115,84 @@ export const wardrobeService = {
       throw new ApiError(500, "Failed to process get item");
     }
   },
+
+  async deleteClothItem(itemId: string, userId: string) {
+    try {
+      const itemRef = db.collection("wardrobeItems").doc(itemId);
+      const doc = await itemRef.get();
+
+      if (!doc.exists) {
+        throw new ApiError(404, "Item not found");
+      }
+
+      const itemData = doc.data();
+      if (itemData?.userID !== userId) {
+        throw new ApiError(403, "Unauthorized to delete this item");
+      }
+
+      // Delete from Storage
+      const storage = getStorage();
+      const bucket = storage.bucket("virtualwardrobe-1e2a1");
+
+      // Get the file path from the imageUrl
+      const imageUrl = itemData.imageUrl;
+      const filePathMatch = imageUrl.match(/wardrobe%2F.*?(?=\?)/);
+      if (!filePathMatch) {
+        throw new ApiError(500, "Invalid file path");
+      }
+      const filePath = decodeURIComponent(filePathMatch[0]);
+
+      // Delete the file
+      try {
+        await bucket.file(filePath).delete();
+      } catch (error) {
+        console.error("Error deleting file from storage:", error);
+        // Continue with Firestore deletion even if Storage deletion fails
+      }
+
+      // Delete from Firestore
+      await itemRef.delete();
+
+      return {success: true, message: "Item deleted successfully"};
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      console.error("Error in deleteClothItem:", error);
+      throw new ApiError(500, "Failed to delete item");
+    }
+  },
+
+  async updateClothItem(
+    itemId: string,
+    updates: {clothName: string},
+    userId: string
+  ) {
+    try {
+      const itemRef = db.collection("wardrobeItems").doc(itemId);
+      const doc = await itemRef.get();
+
+      if (!doc.exists) {
+        throw new ApiError(404, "Item not found");
+      }
+
+      const itemData = doc.data();
+      if (itemData?.userID !== userId) {
+        throw new ApiError(403, "Unauthorized to update this item");
+      }
+
+      await itemRef.update({
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      });
+
+      return {success: true, message: "Item updated successfully"};
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      console.error("Error in updateClothItem:", error);
+      throw new ApiError(500, "Failed to update item");
+    }
+  },
 };

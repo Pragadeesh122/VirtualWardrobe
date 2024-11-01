@@ -82,3 +82,42 @@ export async function getItem(req: RequestWithUser, res: Response) {
     }
   }
 }
+
+export async function deleteClothItem(req: RequestWithUser, res: Response) {
+  try {
+    const {itemId} = req.params;
+    const userId = req.user?.uid;
+
+    const response = await wardrobeService.deleteClothItem(itemId, userId!);
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new ApiError(400, error.message, true);
+    } else {
+      console.error("Delete item error:", error);
+      res.status(500).json({error: "An error occurred while deleting item"});
+    }
+  }
+}
+
+export async function updateClothItem(req: RequestWithUser, res: Response) {
+  try {
+    const {itemId} = req.params;
+    const userId = req.user?.uid;
+    const updates = req.body;
+
+    const response = await wardrobeService.updateClothItem(
+      itemId,
+      updates,
+      userId!
+    );
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new ApiError(400, error.message, true);
+    } else {
+      console.error("Update item error:", error);
+      res.status(500).json({error: "An error occurred while updating item"});
+    }
+  }
+}
