@@ -7,6 +7,7 @@ import {
 } from "./middlewares/index";
 import authRouter from "./routes/auth";
 import wardrobeRouter from "./routes/wardrobe";
+import collectionsRouter from "./routes/collection";
 
 const app = express();
 app.use(corsMiddleware);
@@ -16,6 +17,7 @@ app.use(apiRateLimiter);
 
 app.use("/auth", authRouter);
 app.use("/wardrobe", wardrobeRouter);
+app.use("/collections", collectionsRouter);
 
 // Add error handler middleware
 app.use(errorHandler as unknown as express.ErrorRequestHandler);

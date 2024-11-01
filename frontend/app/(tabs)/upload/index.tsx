@@ -135,14 +135,21 @@ export default function UploadScreen() {
           </Button>
         ))}
       </XStack>
-
       <Button
         onPress={handleUpload}
-        disabled={!image || !itemName || !selectedCategory}
+        disabled={!image || !itemName || !selectedCategory || isUploading}
         marginTop='$4'
-        backgroundColor='$blue10'
-        color='white'>
-        Upload
+        backgroundColor={
+          !image || !itemName || !selectedCategory || isUploading
+            ? "$gray5"
+            : "$blue10"
+        }
+        color={
+          !image || !itemName || !selectedCategory || isUploading
+            ? "$gray11"
+            : "white"
+        }>
+        {isUploading ? "Uploading..." : "Upload"}
       </Button>
     </ScrollView>
   );

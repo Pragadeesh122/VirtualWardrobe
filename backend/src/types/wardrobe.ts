@@ -1,4 +1,5 @@
 export interface ClothItem {
+  id?: string;
   clothType: string;
   clothName: string;
   imageUrl: string;

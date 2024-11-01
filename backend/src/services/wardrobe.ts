@@ -106,7 +106,10 @@ export const wardrobeService = {
         .collection("wardrobeItems")
         .where("userID", "==", data.userId)
         .get();
-      return items.docs.map((doc) => doc.data() as ClothItem);
+      return items.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as ClothItem),
+      }));
     } catch (error) {
       console.error("Error in getItem:", error);
       throw new ApiError(500, "Failed to process get item");

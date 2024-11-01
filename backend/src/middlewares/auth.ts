@@ -16,7 +16,6 @@ export async function authenticate(
     console.log("control reachers here");
     const token = authHeader.split("Bearer ")[1];
     const decodedToken = await auth.verifyIdToken(token);
-    console.log("This is the decoded token:", decodedToken);
 
     req.user = {
       uid: decodedToken.uid,
