@@ -14,7 +14,7 @@ export const wardrobeService = {
   ): Promise<UploadClothItemResponse> {
     try {
       const storage = getStorage();
-      const bucket = storage.bucket("virtualwardrobe-1e2a1");
+      const bucket = storage.bucket("virtualwardrobe-1e2a1.appspot.com");
 
       // Create a sanitized filename
       const timestamp = Date.now();
@@ -132,7 +132,7 @@ export const wardrobeService = {
 
       // Delete from Storage
       const storage = getStorage();
-      const bucket = storage.bucket("virtualwardrobe-1e2a1");
+      const bucket = storage.bucket("virtualwardrobe-1e2a1.appspot.com");
 
       // Get the file path from the imageUrl
       const imageUrl = itemData.imageUrl;

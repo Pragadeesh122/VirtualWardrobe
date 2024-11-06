@@ -83,6 +83,25 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name='calendar/index'
+          options={{
+            title: "Calendar",
+            tabBarLabel: "Calendar",
+            headerTitle: "Outfit Calendar",
+            tabBarIcon: ({color, size}) => (
+              <Ionicons
+                name={
+                  color === Colors[colorScheme].tint
+                    ? "calendar"
+                    : "calendar-outline"
+                }
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name='index'
           options={{
             tabBarButton: () => null,
