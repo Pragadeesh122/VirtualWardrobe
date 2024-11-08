@@ -37,7 +37,6 @@ type Wardrobe = {
 
 export default function WardrobeScreen() {
   const [wardrobe, setWardrobe] = useState<Wardrobe>({});
-  const [expandedTypes, setExpandedTypes] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const {user, token} = useAuth();
   const isFocused = useIsFocused();

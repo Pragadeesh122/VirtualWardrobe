@@ -9,217 +9,241 @@ import {
   XStack,
   Card,
 } from "tamagui";
-import {format, startOfWeek, addDays} from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  addMonths,
+  subMonths,
+} from "date-fns";
 import {useAuth} from "@/context/authContext";
-import {fetchCollections} from "@/app/services/collection";
-import {OutfitLog} from "@/types/calendar";
-import {createOutfitLog, fetchOutfitLogs} from "@/app/services/calendar";
 import {Ionicons} from "@expo/vector-icons";
-
-interface Collection {
-  id: string;
-  name: string;
-  items: CollectionItem[];
-}
-
-interface CollectionItem {
-  clothId: string;
-  imageUrl: string;
-  clothName: string;
-}
+import {createOutfitLog, fetchOutfitLogs} from "@/app/services/calendar";
+import {OutfitLog} from "@/types/calendar";
+import {Collection} from "@/types/collection";
+import {fetchCollections} from "@/app/services/collection";
+import {Link, useRouter} from "expo-router";
+import {TouchableOpacity} from "react-native";
 
 export default function CalendarScreen() {
-  const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), "yyyy-MM-dd")
-  );
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [outfitLogs, setOutfitLogs] = useState<OutfitLog[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
   const [isAddOutfitOpen, setIsAddOutfitOpen] = useState(false);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const {token} = useAuth();
+  const router = useRouter();
 
-  // First, we need to fetch the collection details for each outfit log
-  const [collectionDetails, setCollectionDetails] = useState<{
-    [key: string]: Collection;
-  }>({});
-
+  // Fetch outfit logs
   useEffect(() => {
+    const loadOutfitLogs = async () => {
+      if (token) {
+        try {
+          const logs = await fetchOutfitLogs(token);
+          setOutfitLogs(logs);
+        } catch (error) {
+          console.error("Error fetching outfit logs:", error);
+        }
+      }
+    };
+    loadOutfitLogs();
+  }, [token]);
+
+  // Fetch collections
+  useEffect(() => {
+    const loadCollections = async () => {
+      if (token) {
+        try {
+          const data = await fetchCollections(token);
+          setCollections(data);
+        } catch (error) {
+          console.error("Error loading collections:", error);
+        }
+      }
+    };
     loadCollections();
   }, [token]);
 
-  useEffect(() => {
-    const loadCollectionDetails = async () => {
-      const details: {[key: string]: Collection} = {};
-      for (const log of outfitLogs) {
-        try {
-          const collection = collections.find((c) => c.id === log.collectionId);
-          if (collection) {
-            details[log.id] = collection;
-          }
-        } catch (error) {
-          console.error("Error loading collection details:", error);
-        }
-      }
-      setCollectionDetails(details);
-    };
-
-    if (outfitLogs.length > 0 && collections.length > 0) {
-      loadCollectionDetails();
-    }
-  }, [outfitLogs, collections]);
-
-  useEffect(() => {
-    const loadOutfitLogs = async () => {
-      try {
-        const logs = await fetchOutfitLogs(token!);
-        setOutfitLogs(logs);
-      } catch (error) {
-        console.error("Error loading outfit logs:", error);
-      }
-    };
-
-    if (token) {
-      loadOutfitLogs();
-    }
-  }, [token]);
-
-  const loadCollections = async () => {
-    try {
-      const collectionsData = await fetchCollections(token!);
-      setCollections(collectionsData);
-    } catch (error) {
-      console.error("Error loading collections:", error);
-    }
+  // Get calendar days
+  const getDaysInMonth = () => {
+    const start = startOfMonth(currentDate);
+    const end = endOfMonth(currentDate);
+    return eachDayOfInterval({start, end});
   };
 
-  const getWeekDates = () => {
-    const start = startOfWeek(new Date(selectedDate));
-    return Array.from({length: 7}, (_, i) => {
-      const date = addDays(start, i);
-      const dateString = format(date, "yyyy-MM-dd");
-      const outfitsForDay = outfitLogs.filter((log) => log.date === dateString);
-      return {
-        date: dateString,
-        dayName: format(date, "EEE"),
-        dayNumber: format(date, "d"),
-        outfits: outfitsForDay,
-      };
-    });
+  const days = getDaysInMonth();
+
+  // Handle adding new outfit log
+  const handleAddOutfit = async (collectionId: string) => {
+    if (selectedDate && token) {
+      try {
+        await createOutfitLog(
+          format(selectedDate, "yyyy-MM-dd"),
+          collectionId,
+          token
+        );
+        const updatedLogs = await fetchOutfitLogs(token);
+        setOutfitLogs(updatedLogs);
+        setIsAddOutfitOpen(false);
+      } catch (error) {
+        console.error("Error adding outfit:", error);
+      }
+    }
   };
 
   return (
-    <ScrollView flex={1} padding='$4' paddingTop='$6' backgroundColor='$gray1'>
-      <Text fontSize='$7' fontWeight='bold' marginBottom='$4' color='$gray12'>
-        Calendar
-      </Text>
+    <YStack flex={1} backgroundColor='$gray1'>
+      {/* Calendar Header */}
+      <XStack
+        paddingHorizontal='$4'
+        paddingVertical='$5'
+        justifyContent='space-between'
+        alignItems='center'
+        backgroundColor='$white'>
+        <Button
+          icon={<Ionicons name='chevron-back' size={24} />}
+          onPress={() => setCurrentDate(subMonths(currentDate, 1))}
+          transparent
+        />
+        <Text fontSize='$6' fontWeight='bold'>
+          {format(currentDate, "MMMM yyyy")}
+        </Text>
+        <Button
+          icon={<Ionicons name='chevron-forward' size={24} />}
+          onPress={() => setCurrentDate(addMonths(currentDate, 1))}
+          transparent
+        />
+      </XStack>
 
-      {getWeekDates().map((day) => (
-        <YStack key={day.date} marginBottom='$3'>
-          <Text fontSize='$2' color='$gray11' marginBottom='$1'>
-            {day.dayName} - {format(new Date(day.date), "MMM d")}
+      {/* Weekday Headers */}
+      <XStack
+        paddingHorizontal='$2'
+        paddingVertical='$2'
+        backgroundColor='$white'>
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <Text
+            key={day}
+            width='14.28%'
+            textAlign='center'
+            fontSize='$4'
+            color='$gray11'>
+            {day}
           </Text>
+        ))}
+      </XStack>
 
-          <Card
-            bordered
-            elevate
-            animation='bouncy'
-            scale={0.95}
-            pressStyle={{scale: 0.975}}
-            borderRadius='$4'
-            backgroundColor='$white'>
-            <Card.Header padded>
-              <XStack justifyContent='flex-end'>
-                <Button
-                  size='$2'
-                  theme='active'
-                  borderRadius='$6'
+      {/* Calendar Grid */}
+      <ScrollView>
+        <YStack padding='$2'>
+          <XStack flexWrap='wrap'>
+            {days.map((date) => {
+              const dateString = format(date, "yyyy-MM-dd");
+              const outfitsForDay = outfitLogs.filter(
+                (log) => log.date === dateString
+              );
+
+              return (
+                <Card
+                  key={dateString}
+                  width='14.28%'
+                  minHeight={120}
+                  borderWidth={1}
+                  borderColor='$gray5'
+                  backgroundColor={
+                    isSameMonth(date, currentDate) ? "$white" : "$gray2"
+                  }
+                  pressStyle={{scale: 0.98}}
                   onPress={() => {
-                    setSelectedDate(day.date);
+                    setSelectedDate(date);
                     setIsAddOutfitOpen(true);
-                  }}
-                  icon={<Ionicons name='add-circle-outline' size={16} />}>
-                  Add
-                </Button>
-              </XStack>
-            </Card.Header>
-
-            <Card.Footer padded>
-              <YStack space='$2'>
-                {day.outfits?.map((outfit, index) => (
-                  <XStack
-                    key={index}
-                    space='$2'
-                    alignItems='center'
-                    backgroundColor='$gray2'
-                    padding='$2'
-                    borderRadius='$4'>
-                    <Image
-                      source={{uri: outfit.thumbnailUrl}}
-                      width={30}
-                      height={30}
-                      borderRadius='$2'
-                    />
-                    <Text fontSize='$2' color='$gray11'>
-                      {outfit.collectionName}
-                    </Text>
+                  }}>
+                  <Text fontSize='$3' color='$gray11' padding='$1'>
+                    {format(date, "d")}
+                  </Text>
+                  <XStack flexWrap='wrap' padding='$0.5'>
+                    {outfitsForDay.map((outfit) => (
+                      <Image
+                        key={outfit.id}
+                        source={{uri: outfit.thumbnailUrl}}
+                        width={20}
+                        height={20}
+                        borderRadius='$1'
+                        margin='$0.5'
+                      />
+                    ))}
                   </XStack>
-                ))}
-              </YStack>
-            </Card.Footer>
-          </Card>
+                </Card>
+              );
+            })}
+          </XStack>
         </YStack>
-      ))}
 
+        {/* Stats Section */}
+        <YStack padding='$4' space='$4'>
+          <Link href='/stats' asChild>
+            <Card bordered padding='$4' pressStyle={{scale: 0.98}}>
+              <XStack justifyContent='space-between' alignItems='center'>
+                <YStack>
+                  <Text fontSize='$5' fontWeight='bold' marginBottom='$2'>
+                    Wardrobe Statistics
+                  </Text>
+                  <Text color='$gray11'>
+                    {outfitLogs.length} outfits this month
+                  </Text>
+                </YStack>
+                <Ionicons name='chevron-forward' size={24} color='$gray11' />
+              </XStack>
+            </Card>
+          </Link>
+        </YStack>
+      </ScrollView>
+
+      {/* Collection Selection Sheet */}
       <Sheet
         modal
         open={isAddOutfitOpen}
         onOpenChange={setIsAddOutfitOpen}
         snapPoints={[60]}
-        position={0}
         dismissOnSnapToBottom>
-        <Sheet.Frame padding='$4' backgroundColor='$gray1'>
+        <Sheet.Frame padding='$4'>
           <Sheet.Handle />
-          <Text
-            fontSize='$3'
-            fontWeight='600'
-            marginBottom='$4'
-            color='$gray12'>
-            Add outfit for {format(new Date(selectedDate), "MMM d, yyyy")}
+          <Text fontSize='$5' fontWeight='bold' marginBottom='$4'>
+            Add Outfit for{" "}
+            {selectedDate ? format(selectedDate, "MMMM d, yyyy") : ""}
           </Text>
-          <ScrollView>
-            {collections.map((collection) => (
-              <Button
-                key={collection.id}
-                onPress={async () => {
-                  try {
-                    await createOutfitLog(selectedDate, collection.id, token!);
-                    const updatedLogs = await fetchOutfitLogs(token!);
-                    setOutfitLogs(updatedLogs);
-                    setIsAddOutfitOpen(false);
-                  } catch (error) {
-                    console.error("Error creating outfit log:", error);
-                  }
-                }}
-                marginBottom='$2'
-                bordered
-                animation='bouncy'
-                pressStyle={{scale: 0.97}}
-                backgroundColor='$white'>
-                <XStack space='$2' alignItems='center' flex={1}>
-                  <Image
-                    source={{uri: collection.items[0]?.imageUrl}}
-                    width={35}
-                    height={35}
-                    borderRadius='$2'
-                  />
-                  <Text fontSize='$2' color='$gray12'>
+          <ScrollView style={{maxHeight: 400}}>
+            <YStack space='$4'>
+              {collections.map((collection) => (
+                <Card
+                  key={collection.id}
+                  pressStyle={{scale: 0.98}}
+                  onPress={() => handleAddOutfit(collection.id)}
+                  padding='$4'
+                  bordered>
+                  <Text fontSize='$4' fontWeight='600' marginBottom='$2'>
                     {collection.name}
                   </Text>
-                </XStack>
-              </Button>
-            ))}
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <XStack space='$2'>
+                      {collection.items.map((item) => (
+                        <Image
+                          key={item.clothId}
+                          source={{uri: item.imageUrl}}
+                          width={50}
+                          height={50}
+                          borderRadius='$2'
+                        />
+                      ))}
+                    </XStack>
+                  </ScrollView>
+                </Card>
+              ))}
+            </YStack>
           </ScrollView>
         </Sheet.Frame>
       </Sheet>
-    </ScrollView>
+    </YStack>
   );
 }

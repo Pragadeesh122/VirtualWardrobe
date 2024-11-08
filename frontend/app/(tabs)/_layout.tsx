@@ -47,6 +47,14 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name='stats/index'
+          options={{
+            title: "Statistics",
+            headerTitle: "Wardrobe Statistics",
+            tabBarButton: () => null,
+          }}
+        />
+        <Tabs.Screen
           name='wardrobe/index'
           options={{
             title: "Wardrobe",
