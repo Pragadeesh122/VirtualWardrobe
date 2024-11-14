@@ -46,10 +46,11 @@ export default function LoginScreen() {
       />
       <Button
         onPress={handleLogin}
-        backgroundColor='$blue10'
+        backgroundColor={loading ? "gray" : "$blue10"}
         color='white'
-        width='100%'>
-        Login
+        width='100%'
+        disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
       </Button>
       <Text color='$blue10' onPress={() => router.push("/(auth)/register")}>
         Don't have an account? Register

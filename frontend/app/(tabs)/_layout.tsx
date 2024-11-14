@@ -1,6 +1,6 @@
 import {Redirect, Tabs} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
-import {useColorScheme, View} from "react-native";
+import {useColorScheme} from "react-native";
 import {Colors} from "@/constants/Colors";
 import {useAuth} from "@/context/authContext";
 import {SafeAreaView} from "react-native-safe-area-context";
@@ -19,12 +19,20 @@ export default function TabsLayout() {
         screenOptions={{
           headerShown: false,
           tabBarShowLabel: true,
-          tabBarActiveTintColor: Colors[colorScheme].tint,
+          tabBarActiveTintColor: "#4A72FF",
+          tabBarInactiveTintColor: "#A0A3BD",
           tabBarStyle: {
             borderTopWidth: 1,
-            borderTopColor: colorScheme === "dark" ? "#1f1f1f" : "#e5e5e5",
-            backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+            borderTopColor: "#2F3142",
+            backgroundColor: "#23242F",
             height: 70,
+          },
+          tabBarItemStyle: {
+            paddingVertical: 10,
+            height: 70,
+          },
+          tabBarIconStyle: {
+            marginBottom: 4,
           },
         }}>
         <Tabs.Screen
@@ -51,6 +59,14 @@ export default function TabsLayout() {
           options={{
             title: "Statistics",
             headerTitle: "Wardrobe Statistics",
+            tabBarButton: () => null,
+          }}
+        />
+        <Tabs.Screen
+          name='wardrobe/category/[type]'
+          options={{
+            title: "Category",
+            headerTitle: "Wardrobe Category",
             tabBarButton: () => null,
           }}
         />

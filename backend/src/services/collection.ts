@@ -76,4 +76,28 @@ export const collectionsService = {
       throw new ApiError(500, "Failed to fetch collections");
     }
   },
+  async deleteCollection(collectionId: string, userId: string) {
+    try {
+      const collectionRef = db.collection("collections").doc(collectionId);
+      const doc = await collectionRef.get();
+
+      if (!doc.exists) {
+        throw new ApiError(404, "Collection not found");
+      }
+
+      const collectionData = doc.data();
+      if (collectionData?.userId !== userId) {
+        throw new ApiError(403, "Unauthorized to delete this collection");
+      }
+
+      await collectionRef.delete();
+      return {success: true, message: "Collection deleted successfully"};
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      console.error("Error in deleteCollection:", error);
+      throw new ApiError(500, "Failed to delete collection");
+    }
+  },
 };

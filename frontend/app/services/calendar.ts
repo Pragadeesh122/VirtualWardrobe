@@ -55,3 +55,4 @@ export async function deleteOutfitLog(outfitId: string, token: string) {
     throw error;
   }
 }
+

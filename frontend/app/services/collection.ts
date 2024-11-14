@@ -38,3 +38,20 @@ export async function fetchCollections(token: string) {
     throw error;
   }
 }
+
+export const deleteCollection = async (collectionId: string, token: string) => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}/collections/${collectionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting collection:", error);
+    throw error;
+  }
+};

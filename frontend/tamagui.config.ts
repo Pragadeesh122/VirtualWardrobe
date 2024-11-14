@@ -74,7 +74,7 @@ const bodyFont = createInterFont(
 
 export const config = createTamagui({
   defaultFont: "body",
-  animations,
+  animations: animations as any,
   fonts: {
     heading: headingFont,
     body: bodyFont,

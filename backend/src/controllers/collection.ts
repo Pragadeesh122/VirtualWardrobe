@@ -43,3 +43,25 @@ export async function getCollections(req: RequestWithUser, res: Response) {
     res.status(500).json({error: "Failed to fetch collections"});
   }
 }
+
+export async function deleteCollection(req: RequestWithUser, res: Response) {
+  try {
+    const {collectionId} = req.params;
+    const userId = req.user?.uid;
+
+    const response = await collectionsService.deleteCollection(
+      collectionId,
+      userId!
+    );
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new ApiError(400, error.message, true);
+    } else {
+      console.error("Delete collection error:", error);
+      res
+        .status(500)
+        .json({error: "An error occurred while deleting collection"});
+    }
+  }
+}
