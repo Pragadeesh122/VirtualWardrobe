@@ -55,9 +55,12 @@ export const authService = {
       }
 
       const userData = userProfile.data();
+      console.log("Login Response here");
+      console.log(authResult);
 
       return {
         token: authResult.idToken,
+        refreshToken: authResult.refreshToken,
         user: {
           userName: userData?.userName,
           email: userData?.email,
@@ -72,13 +75,65 @@ export const authService = {
       );
     }
   },
+
+  async refreshToken(refreshToken: string): Promise<LoginResponse> {
+    try {
+      const response = await fetch(
+        `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASE_API_KEY}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            grant_type: "refresh_token",
+            refresh_token: refreshToken,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to refresh token");
+      }
+
+      const data = await response.json();
+
+
+      const decodedToken = await auth.verifyIdToken(data.id_token);
+      const userProfile = await db
+        .collection("userProfiles")
+        .doc(decodedToken.uid)
+        .get();
+
+      if (!userProfile.exists) {
+        throw new Error("User profile not found");
+      }
+
+      const userData = userProfile.data();
+
+      return {
+        token: data.id_token,
+        refreshToken: data.refresh_token,
+        user: {
+          userName: userData?.userName,
+          email: userData?.email,
+          uid: decodedToken.uid,
+        },
+      };
+    } catch (error) {
+      throw new Error(
+        `Token refresh failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  },
 };
 
-// Helper function to sign in with password
 async function signInWithPassword(
   email: string,
   password: string
-): Promise<{idToken: string; localId: string}> {
+): Promise<{idToken: string; localId: string; refreshToken: string}> {
   const response = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
     {

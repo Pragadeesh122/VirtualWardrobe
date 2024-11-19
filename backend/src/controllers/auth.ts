@@ -41,3 +41,19 @@ export const login = async (req: Request, res: Response) => {
     res.status(401).json({error: "Invalid credentials"});
   }
 };
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const {refreshToken} = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({error: "Refresh token is required"});
+    }
+
+    const response = await authService.refreshToken(refreshToken);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    res.status(401).json({error: "Failed to refresh token"});
+  }
+};

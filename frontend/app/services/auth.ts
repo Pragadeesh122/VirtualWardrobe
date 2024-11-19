@@ -6,7 +6,11 @@ import {API_URL} from "../utils/API_url";
 export const userLogin = async (
   email: string,
   password: string,
-  loginFn: (token: string, user: UserProfile) => Promise<void>
+  loginFn: (
+    token: string,
+    user: UserProfile,
+    refreshToken: string
+  ) => Promise<void>
 ) => {
   try {
     console.log("Attempting login with URL:", API_URL);
@@ -17,7 +21,11 @@ export const userLogin = async (
     console.log("Login response:", response.data);
 
     if (response.data.token && response.data.user) {
-      await loginFn(response.data.token, response.data.user);
+      await loginFn(
+        response.data.token,
+        response.data.user,
+        response.data.refreshToken
+      );
       return true;
     }
     throw new Error("Invalid response format");
