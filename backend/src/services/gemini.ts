@@ -6,7 +6,7 @@ import {getStorage} from "firebase-admin/storage";
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({model: "gemini-pro-vision"});
+const model = genAI.getGenerativeModel({model: "gemini-2.0-flash-exp"});
 
 export class Gemini {
   private static async generateImageParts(items: GeminiInput["items"]) {
@@ -71,29 +71,32 @@ Seasons: ${input.preferences.season.join(", ")}
 Color Preferences: ${input.preferences.colorPreference.join(", ")}
 Dress Codes: ${input.preferences.dresscode.join(", ")}
 
-For each item, consider:
-- Color: ${input.items
-      .map((item: GeminiItem) => item.attributes.color)
-      .join(", ")}
-- Type: ${input.items.map((item: GeminiItem) => item.type).join(", ")}
-- Category: ${input.items
-      .map((item: GeminiItem) => item.attributes.category)
-      .join(", ")}
+Selected Items:
+${input.items
+  .map(
+    (item: GeminiItem) =>
+      `- [ID: ${item.id}] ${item.clothName} (Type: ${item.clothType})`
+  )
+  .join("\n")}
+
+I've provided images of each clothing item. Please analyze their visual characteristics (colors, patterns, style) and create outfit combinations that match the given preferences.
+
+IMPORTANT: Use the exact item IDs provided in square brackets [ID: xxx] when suggesting outfits.
 
 Please provide 3 outfit suggestions in the following JSON format:
 {
   "suggestedOutfits": [
     {
-      "itemIds": ["id1", "id2"],
-      "reasoning": "Detailed explanation of why these items work together",
-      "styleAdvice": "Additional styling tips",
+      "itemIds": ["exact-id-1", "exact-id-2"],
+      "reasoning": "Detailed explanation of why these items work together, considering their visual appearance and the user's preferences",
+      "styleAdvice": "Additional styling tips and accessories suggestions",
       "confidenceScore": 0.95,
       "matchingPreferences": ["preference1", "preference2"]
     }
   ]
 }
 
-Focus on creating cohesive outfits that match the specified preferences and style guidelines.`;
+Focus on creating cohesive outfits that match the specified preferences and style guidelines. Consider how the actual appearance of the items in the images work together.`;
   }
 
   public static async generateSuggestions(
@@ -108,7 +111,10 @@ Focus on creating cohesive outfits that match the specified preferences and styl
       const text = response.text();
 
       try {
-        const jsonResponse = JSON.parse(text) as GeminiResponse;
+        // Clean the response text by removing markdown formatting
+        const cleanText = text.replace(/```json\n?|\n?```/g, "").trim();
+        const jsonResponse = JSON.parse(cleanText) as GeminiResponse;
+        console.log(jsonResponse);
         return jsonResponse;
       } catch (error) {
         logger.error("Error parsing Gemini response:", error);

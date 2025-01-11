@@ -28,19 +28,14 @@ export interface GenerateSuggestionResponse {
   totalOptions: number;
 }
 
-// Types for Gemini API
-export interface GeminiItemAttributes {
-  color: string;
-  pattern?: string;
-  material?: string;
-  category: string;
-}
-
 export interface GeminiItem {
   id: string;
-  type: string;
+  clothName: string;
+  clothType: string;
   imageUrl: string;
-  attributes: GeminiItemAttributes;
+  userID?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GeminiInput {

@@ -43,14 +43,12 @@ export const suggestion = {
       const geminiInput: GeminiInput = {
         items: items.map((item: ClothItem) => ({
           id: item.id!,
-          type: item.clothType,
+          clothName: item.clothName,
+          clothType: item.clothType,
           imageUrl: item.imageUrl,
-          attributes: {
-            color: item.color || "unknown",
-            pattern: item.pattern,
-            material: item.material,
-            category: item.category || item.clothType,
-          },
+          userID: item.userID,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
         })),
         preferences: data.preferences,
       };
