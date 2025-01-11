@@ -13,6 +13,7 @@ google-services.json
 GoogleService-Info.plist
 .env
 codebase.md
+.aidigestignore
 
 # macOS
 .DS_Store

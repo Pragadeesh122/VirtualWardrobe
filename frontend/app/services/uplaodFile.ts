@@ -1,6 +1,6 @@
 import axios from "axios";
 import {API_URL} from "../utils/API_url";
-
+import {ClothItem} from "@/types/wardrobe";
 import {Platform} from "react-native";
 
 export async function uploadFile(
@@ -46,9 +46,13 @@ export async function uploadFile(
   }
 }
 
-export async function fetchWardrobe(userID: string, token: string) {
+export async function fetchWardrobe(
+  userID: string,
+  token: string
+): Promise<ClothItem[]> {
   try {
-    const response = await axios.post(
+    console.log("[fetchWardrobe] Fetching items for user:", userID);
+    const response = await axios.post<ClothItem[]>(
       `${API_URL}/wardrobe/getItem`,
       {
         userID,
@@ -60,10 +64,33 @@ export async function fetchWardrobe(userID: string, token: string) {
         },
       }
     );
-    console.log(response.data);
-    return response.data;
+
+    console.log("[fetchWardrobe] Raw response data:", response.data);
+
+    // Ensure each item has its document ID and required fields
+    const items = response.data
+      .map((item) => {
+        if (!item.id) {
+          console.warn("[fetchWardrobe] Item missing ID:", item);
+          return null;
+        }
+
+        // Log each item's data
+        console.log(`[fetchWardrobe] Processing item ${item.id}:`, {
+          id: item.id,
+          clothName: item.clothName,
+          clothType: item.clothType,
+          imageUrl: item.imageUrl,
+        });
+
+        return item; // Return the original item since it has an ID
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    console.log("[fetchWardrobe] Final processed items:", items);
+    return items;
   } catch (error) {
-    console.error("Fetch wardrobe error:", error);
+    console.error("[fetchWardrobe] Error fetching wardrobe:", error);
     throw error;
   }
 }

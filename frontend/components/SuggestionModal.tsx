@@ -1,34 +1,20 @@
 import React, {useState} from "react";
-import {
-  Sheet,
-  YStack,
-  Text,
-  Input,
-  Button,
-  XStack,
-  ScrollView,
-  Checkbox,
-  Card,
-  Image,
-  View,
-  Switch,
-} from "tamagui";
-import {useAuth} from "@/context/authContext";
-import {generateSuggestions} from "@/app/services/suggestion";
-import SelectedItemsPreview from "@/components/SelectedItemsPreview";
-import PreferencesSelector from "@/components/PreferencesSelector";
-
-import {
-  UserPreferences,
-  SuggestedCollection,
-  SuggestionModalProps,
-  PreferenceOption,
-  WardrobeItem,
-} from "@/types/suggestions";
+import {Sheet, YStack, Text, Button, ScrollView, Spinner} from "tamagui";
 import {theme} from "@/theme/theme";
-import ItemSelector from "@/components/ItemSelector";
+import {ClothItem} from "@/types/wardrobe";
+import {
+  GenerateSuggestionRequest,
+  OutfitSuggestion,
+  SuggestionPreferences,
+} from "@/types/suggestions";
+import PreferencesSelector from "./PreferencesSelector";
+import SuggestionResults from "./SuggestionResults";
+import {generateSuggestions} from "@/app/services/suggestions";
+import SelectedItemsPreview from "./SelectedItemsPreview";
+import ItemSelector from "./ItemSelector";
+import {useAuth} from "@/context/authContext";
 
-const PREFERENCES: PreferenceOption = {
+const PREFERENCES = {
   occasion: [
     "Formal",
     "Casual",
@@ -66,6 +52,17 @@ const PREFERENCES: PreferenceOption = {
   ],
 } as const;
 
+interface SuggestionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedItems: string[];
+  wardrobeItems: Record<string, ClothItem>;
+  onAcceptSuggestion: (items: string[]) => void;
+  setSelectedItemsForSuggestion: React.Dispatch<
+    React.SetStateAction<Set<string>>
+  >;
+}
+
 export default function SuggestionModal({
   isOpen,
   onClose,
@@ -74,38 +71,104 @@ export default function SuggestionModal({
   onAcceptSuggestion,
   setSelectedItemsForSuggestion,
 }: SuggestionModalProps) {
-  const [preferences, setPreferences] = useState<UserPreferences>({
+  const {token} = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<OutfitSuggestion[]>([]);
+  const [preferences, setPreferences] = useState<SuggestionPreferences>({
     occasion: [],
     style: [],
     season: [],
     colorPreference: [],
     dresscode: [],
   });
-  const [suggestions, setSuggestions] = useState<SuggestedCollection[]>([]);
-  const [loading, setLoading] = useState(false);
-  const {token} = useAuth();
   const [isItemSelectorOpen, setIsItemSelectorOpen] = useState(false);
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      if (!token) throw new Error("No authentication token");
-      const itemsToUse = selectedItems;
+  const handlePreferenceChange = (
+    category: keyof SuggestionPreferences,
+    value: string
+  ) => {
+    setPreferences((prev) => ({
+      ...prev,
+      [category]: prev[category].includes(value)
+        ? prev[category].filter((v) => v !== value)
+        : [...prev[category], value],
+    }));
+  };
 
-      const result = await generateSuggestions(itemsToUse, preferences, token);
-      // setSuggestions(result.suggestions);
-    } catch (error) {
-      console.error("Error generating suggestions:", error);
+  const handleGenerate = async () => {
+    if (!token) {
+      setError("Not authenticated");
+      return;
+    }
+
+    if (selectedItems.length === 0) {
+      setError("Please select at least one item");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Ensure we're sending valid document IDs
+      const validSelectedItems = selectedItems.filter(
+        (id) => wardrobeItems[id]?.id === id
+      );
+
+      if (validSelectedItems.length === 0) {
+        throw new Error("No valid items selected");
+      }
+
+      const request: GenerateSuggestionRequest = {
+        selectedItems: validSelectedItems,
+        preferences,
+      };
+
+      console.log("Sending request with items:", validSelectedItems);
+      const response = await generateSuggestions(request, token);
+      console.log("[SuggestionModal] Received response:", response);
+      if (!response || !Array.isArray(response.suggestions)) {
+        throw new Error("Invalid response format");
+      }
+      setSuggestions(response.suggestions);
+      console.log("[SuggestionModal] Updated suggestions state:", response);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to generate suggestions"
+      );
+      setSuggestions([]); // Reset suggestions on error
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  const handleAccept = (items: string[]) => {
+    onAcceptSuggestion(items);
+    onClose();
+  };
+
+  const selectedItemsWithId = selectedItems
+    .map((id) => wardrobeItems[id])
+    .filter(
+      (item): item is ClothItem => item !== undefined && item.id !== undefined
+    )
+    .map((item) => ({
+      id: item.id!,
+      imageUrl: item.imageUrl,
+      clothName: item.clothName,
+    }));
 
   return (
     <Sheet
       modal
       open={isOpen}
-      onOpenChange={onClose}
+      onOpenChange={(open: boolean) => {
+        if (!open) {
+          setSuggestions([]);
+          setError(null);
+          onClose();
+        }
+      }}
       snapPoints={[90]}
       position={0}
       dismissOnSnapToBottom>
@@ -116,94 +179,98 @@ export default function SuggestionModal({
         borderTopLeftRadius='$4'
         borderTopRightRadius='$4'>
         <Sheet.Handle />
-        <YStack space='$4'>
+        <YStack space='$4' flex={1}>
           <Text fontSize='$6' fontWeight='bold' color={theme.text}>
-            Generate Collection Suggestions
+            {suggestions.length > 0
+              ? "Outfit Suggestions"
+              : "Generate Outfit Suggestions"}
           </Text>
 
-          <Button
-            size='$3'
-            backgroundColor={theme.buttonBg}
-            color={theme.text}
-            borderColor={theme.border}
-            borderWidth={1}
-            onPress={() => setIsItemSelectorOpen(true)}>
-            Select Items
-          </Button>
-
-          <ScrollView style={{maxHeight: "80%"}}>
-            <YStack space='$4' paddingBottom='$4'>
-              <SelectedItemsPreview
-                items={selectedItems
-                  .map((id) => wardrobeItems.find((item) => item.id === id))
-                  .filter((item): item is WardrobeItem => item !== undefined)}
-                onRemoveItem={(id) => {
-                  setSelectedItemsForSuggestion((prev) => {
-                    const newSet = new Set(prev);
-                    newSet.delete(id);
-                    return newSet;
-                  });
-                }}
-                onSelectAll={() => {
-                  setSelectedItemsForSuggestion(
-                    new Set(wardrobeItems.map((item) => item.id))
-                  );
-                }}
-                onClearSelection={() => {
-                  setSelectedItemsForSuggestion(new Set());
-                }}
-                totalItems={wardrobeItems.length}
-                onSelectItems={() => setIsItemSelectorOpen(true)}
-              />
-
-              <PreferencesSelector
-                preferences={preferences}
-                onPreferenceChange={(category, value) => {
-                  setPreferences((prev) => ({
-                    ...prev,
-                    [category]: prev[category].includes(value)
-                      ? prev[category].filter((item) => item !== value)
-                      : [...prev[category], value],
-                  }));
-                }}
-                preferenceOptions={PREFERENCES}
-              />
-
-              {/* {suggestions.length > 0 && (
+          <ScrollView
+            flex={1}
+            bounces={false}
+            showsVerticalScrollIndicator={false}
+            automaticallyAdjustKeyboardInsets={true}>
+            <YStack space='$4' flex={1}>
+              {console.log(
+                "[SuggestionModal] Current suggestions:",
+                suggestions
+              )}
+              {console.log(
+                "[SuggestionModal] Suggestions length:",
+                suggestions.length
+              )}
+              {suggestions.length > 0 ? (
                 <SuggestionResults
                   suggestions={suggestions}
-                  itemsData={wardrobeItems.reduce<Record<string, WardrobeItem>>(
-                    (acc, item) => ({
-                      ...acc,
-                      [item.id]: item,
-                    }),
-                    {}
-                  )}
-                  onAccept={onAcceptSuggestion}
-                  onReject={(suggestionId) => {
-                    setSuggestions((prev) =>
-                      prev.filter((s) => s.name !== suggestionId)
-                    );
-                  }}
+                  itemsData={wardrobeItems}
+                  onAccept={handleAccept}
                 />
-              )} */}
+              ) : (
+                <>
+                  <YStack space='$4'>
+                    <Button
+                      size='$3'
+                      backgroundColor={theme.buttonBg}
+                      color={theme.text}
+                      borderColor={theme.border}
+                      borderWidth={1}
+                      onPress={() => setIsItemSelectorOpen(true)}>
+                      Select Items
+                    </Button>
+                    <SelectedItemsPreview
+                      items={selectedItemsWithId}
+                      onRemoveItem={(id) => {
+                        setSelectedItemsForSuggestion((prev) => {
+                          const newSet = new Set(prev);
+                          newSet.delete(id);
+                          return newSet;
+                        });
+                      }}
+                      onSelectAll={() => {
+                        setSelectedItemsForSuggestion(
+                          new Set(Object.keys(wardrobeItems))
+                        );
+                      }}
+                      onClearSelection={() => {
+                        setSelectedItemsForSuggestion(new Set());
+                      }}
+                      totalItems={Object.keys(wardrobeItems).length}
+                      onSelectItems={() => setIsItemSelectorOpen(true)}
+                    />
+                  </YStack>
+
+                  <PreferencesSelector
+                    preferences={preferences}
+                    onPreferenceChange={handlePreferenceChange}
+                    preferenceOptions={PREFERENCES}
+                  />
+                </>
+              )}
             </YStack>
           </ScrollView>
 
-          <Button
-            size='$3'
-            backgroundColor={theme.accent}
-            color={theme.text}
-            onPress={handleGenerate}
-            disabled={loading || selectedItems.length === 0}
-            position='absolute'
-            bottom={16}
-            left={16}
-            right={16}
-            borderRadius='$4'
-            height={40}>
-            {loading ? "Generating..." : "Generate Suggestions"}
-          </Button>
+          {suggestions.length === 0 && (
+            <Button
+              size='$3'
+              backgroundColor={theme.accent}
+              color={theme.text}
+              onPress={handleGenerate}
+              disabled={isLoading || selectedItems.length === 0}
+              borderRadius='$4'
+              height={44}
+              marginTop='$2'
+              marginBottom='$2'
+              pressStyle={{opacity: 0.8}}>
+              {isLoading ? <Spinner /> : "Generate Suggestions"}
+            </Button>
+          )}
+
+          {error && (
+            <Text color={theme.error} fontSize='$4'>
+              {error}
+            </Text>
+          )}
         </YStack>
       </Sheet.Frame>
 

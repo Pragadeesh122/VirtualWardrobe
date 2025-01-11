@@ -22,7 +22,7 @@ import {
 import {fetchWardrobe} from "@/app/services/uplaodFile";
 import {Ionicons} from "@expo/vector-icons";
 import SuggestionModal from "@/components/SuggestionModal";
-import {SuggestedCollection} from "@/types/suggestions";
+import {ClothItem} from "@/types/wardrobe";
 
 interface CollectionItem {
   clothId: string;
@@ -36,15 +36,8 @@ interface Collection {
   items: CollectionItem[];
 }
 
-interface WardrobeItem {
-  id: string;
-  imageUrl: string;
-  clothName: string;
-  clothType: string;
-}
-
 interface GroupedWardrobeItems {
-  [key: string]: WardrobeItem[];
+  [key: string]: ClothItem[];
 }
 
 const theme = {
@@ -63,7 +56,9 @@ export default function CollectionsScreen() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [wardrobeItems, setWardrobeItems] = useState<WardrobeItem[]>([]);
+  const [wardrobeItems, setWardrobeItems] = useState<Record<string, ClothItem>>(
+    {}
+  );
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [collectionToDelete, setCollectionToDelete] =
     useState<Collection | null>(null);
@@ -85,10 +80,38 @@ export default function CollectionsScreen() {
 
   const loadWardrobe = async () => {
     try {
+      console.log("[CollectionsScreen] Loading wardrobe items");
       const data = await fetchWardrobe(user?.uid!, token!);
-      setWardrobeItems(data);
+      console.log("[CollectionsScreen] Fetched wardrobe data:", data);
+
+      const itemsRecord = data.reduce(
+        (acc: Record<string, ClothItem>, item: ClothItem) => {
+          // The document ID should be used as the key
+          const id = item.id || "";
+          if (id) {
+            console.log(
+              `[CollectionsScreen] Adding item ${id} to record:`,
+              item
+            );
+            acc[id] = {
+              ...item,
+              id, // Ensure ID is set
+            };
+          } else {
+            console.log("[CollectionsScreen] Skipping item without ID:", item);
+          }
+          return acc;
+        },
+        {}
+      );
+
+      console.log(
+        "[CollectionsScreen] Final wardrobe items record:",
+        itemsRecord
+      );
+      setWardrobeItems(itemsRecord);
     } catch (error) {
-      console.error("Error loading wardrobe:", error);
+      console.error("[CollectionsScreen] Error loading wardrobe:", error);
     }
   };
 
@@ -98,28 +121,51 @@ export default function CollectionsScreen() {
   }, [token]);
 
   const handleCreateCollection = async () => {
+    console.log("[CollectionsScreen] Starting collection creation");
+    console.log("[CollectionsScreen] Collection name:", newCollectionName);
+    console.log(
+      "[CollectionsScreen] Selected items:",
+      Array.from(selectedItems)
+    );
+
     if (newCollectionName && selectedItems.size > 0) {
       try {
         const selectedItemIds = Array.from(selectedItems).filter(
-          (id) => id !== undefined
+          (id): id is string => id !== undefined
         );
-        if (selectedItemIds.length === 0) return;
+        console.log("[CollectionsScreen] Filtered item IDs:", selectedItemIds);
 
+        if (selectedItemIds.length === 0) {
+          console.log("[CollectionsScreen] No valid items after filtering");
+          return;
+        }
+
+        console.log("[CollectionsScreen] Calling createCollection service");
         const response = await createCollection(
           newCollectionName,
           selectedItemIds,
           token!
         );
+        console.log(
+          "[CollectionsScreen] Create collection response:",
+          response
+        );
 
         if (response) {
+          console.log("[CollectionsScreen] Collection created successfully");
           setIsCreateOpen(false);
           setNewCollectionName("");
           setSelectedItems(new Set());
           await loadCollections();
         }
       } catch (error) {
-        console.error("Error creating collection:", error);
+        console.error("[CollectionsScreen] Error creating collection:", error);
       }
+    } else {
+      console.log("[CollectionsScreen] Invalid input - Name or items missing", {
+        hasName: Boolean(newCollectionName),
+        itemCount: selectedItems.size,
+      });
     }
   };
 
@@ -142,9 +188,10 @@ export default function CollectionsScreen() {
     }
   };
 
-  const groupItemsByType = (items: WardrobeItem[]): GroupedWardrobeItems => {
+  const groupItemsByType = (items: ClothItem[]): GroupedWardrobeItems => {
     return items.reduce((acc: GroupedWardrobeItems, item) => {
-      const type = item.clothType || "Other";
+      if (!item.clothType) return acc;
+      const type = item.clothType;
       if (!acc[type]) {
         acc[type] = [];
       }
@@ -242,6 +289,10 @@ export default function CollectionsScreen() {
         modal
         open={isCreateOpen}
         onOpenChange={(open: boolean) => {
+          console.log(
+            "[CollectionsScreen] Create collection sheet state changed:",
+            open
+          );
           setIsCreateOpen(open);
           if (!open) {
             setNewCollectionName("");
@@ -270,87 +321,18 @@ export default function CollectionsScreen() {
             borderColor={theme.border}
             color={theme.text}
           />
-          <Text
-            fontSize='$4'
-            fontWeight='500'
-            color={theme.text}
-            marginBottom='$2'>
-            Select Items
-          </Text>
-          <ScrollView style={{maxHeight: 400}}>
-            <YStack space='$4'>
-              <Accordion type='multiple'>
-                {Object.entries(groupItemsByType(wardrobeItems)).map(
-                  ([type, items]) => (
-                    <Accordion.Item key={type} value={type}>
-                      <Accordion.Trigger
-                        flexDirection='row'
-                        justifyContent='space-between'
-                        alignItems='center'
-                        padding='$3'
-                        backgroundColor={theme.cardBg}
-                        borderRadius='$2'>
-                        {({open}: {open: boolean}) => (
-                          <>
-                            <Text
-                              fontSize='$4'
-                              fontWeight='600'
-                              color={theme.text}
-                              textTransform='capitalize'>
-                              {type}
-                            </Text>
-                            <Ionicons
-                              name={open ? "chevron-up" : "chevron-down"}
-                              size={24}
-                              color={theme.text}
-                            />
-                          </>
-                        )}
-                      </Accordion.Trigger>
-                      <Accordion.Content>
-                        <YStack space='$2' padding='$2'>
-                          {items.map((item) => (
-                            <XStack
-                              key={item.id}
-                              space='$2'
-                              alignItems='center'
-                              padding='$2'
-                              backgroundColor={theme.buttonBg}
-                              borderRadius='$2'>
-                              <Checkbox
-                                id={item.id}
-                                checked={selectedItems.has(item.id)}
-                                onCheckedChange={(checked) => {
-                                  setSelectedItems((prev) => {
-                                    const newSet = new Set(prev);
-                                    if (checked) {
-                                      newSet.add(item.id);
-                                    } else {
-                                      newSet.delete(item.id);
-                                    }
-                                    return newSet;
-                                  });
-                                }}
-                              />
-                              <Image
-                                source={{uri: item.imageUrl}}
-                                width={50}
-                                height={50}
-                                borderRadius='$1'
-                              />
-                              <Text color={theme.text}>{item.clothName}</Text>
-                            </XStack>
-                          ))}
-                        </YStack>
-                      </Accordion.Content>
-                    </Accordion.Item>
-                  )
-                )}
-              </Accordion>
-            </YStack>
-          </ScrollView>
           <Button
-            onPress={handleCreateCollection}
+            onPress={async () => {
+              console.log(
+                "[CollectionsScreen] Creating collection with name:",
+                newCollectionName
+              );
+              console.log(
+                "[CollectionsScreen] Selected items:",
+                Array.from(selectedItems)
+              );
+              await handleCreateCollection();
+            }}
             marginTop='$4'
             backgroundColor={theme.accent}
             color={theme.text}
@@ -408,19 +390,61 @@ export default function CollectionsScreen() {
       <SuggestionModal
         isOpen={isSuggestionsOpen}
         onClose={() => {
+          console.log("[CollectionsScreen] Closing suggestion modal");
           setIsSuggestionsOpen(false);
           setSelectedItemsForSuggestion(new Set());
         }}
         selectedItems={Array.from(selectedItemsForSuggestion)}
         wardrobeItems={wardrobeItems}
         setSelectedItemsForSuggestion={setSelectedItemsForSuggestion}
-        onAcceptSuggestion={async (suggestion: SuggestedCollection) => {
+        onAcceptSuggestion={async (items: string[]) => {
+          console.log(
+            "[CollectionsScreen] Accepting suggestion with items:",
+            items
+          );
           try {
-            await createCollection(suggestion.name, suggestion.items, token!);
-            await loadCollections();
+            if (items.length === 0) {
+              console.log("[CollectionsScreen] No items selected, returning");
+              return;
+            }
+
+            // Log the wardrobe items state for debugging
+            console.log(
+              "[CollectionsScreen] Current wardrobe items:",
+              wardrobeItems
+            );
+
+            // Ensure we only use valid item IDs
+            const validItems = items.filter((id) => {
+              const item = wardrobeItems[id];
+              console.log(`[CollectionsScreen] Checking item ${id}:`, item);
+              return item !== undefined;
+            });
+
+            console.log("[CollectionsScreen] Valid items:", validItems);
+
+            if (validItems.length === 0) {
+              console.log(
+                "[CollectionsScreen] No valid items found, returning"
+              );
+              return;
+            }
+
+            // Open the create collection sheet with pre-selected items
+            console.log(
+              "[CollectionsScreen] Setting selected items:",
+              validItems
+            );
+            setSelectedItems(new Set(validItems));
+            console.log("[CollectionsScreen] Opening create collection sheet");
+            setIsCreateOpen(true);
             setIsSuggestionsOpen(false);
+            setSelectedItemsForSuggestion(new Set());
           } catch (error) {
-            console.error("Error creating suggested collection:", error);
+            console.error(
+              "[CollectionsScreen] Error handling suggestion acceptance:",
+              error
+            );
           }
         }}
       />

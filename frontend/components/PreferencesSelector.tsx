@@ -1,11 +1,14 @@
 import React from "react";
 import {YStack, Text, XStack, Button} from "tamagui";
-import {UserPreferences} from "@/types/suggestions";
+import {SuggestionPreferences} from "@/types/suggestions";
 
 interface PreferencesSelectorProps {
-  preferences: UserPreferences;
-  onPreferenceChange: (category: keyof UserPreferences, value: string) => void;
-  preferenceOptions: Record<keyof UserPreferences, readonly string[]>;
+  preferences: SuggestionPreferences;
+  onPreferenceChange: (
+    category: keyof SuggestionPreferences,
+    value: string
+  ) => void;
+  preferenceOptions: Record<keyof SuggestionPreferences, readonly string[]>;
 }
 
 export default function PreferencesSelector({
@@ -16,7 +19,10 @@ export default function PreferencesSelector({
   return (
     <YStack space='$4'>
       {(
-        Object.entries(preferenceOptions) as [keyof UserPreferences, string[]][]
+        Object.entries(preferenceOptions) as [
+          keyof SuggestionPreferences,
+          string[]
+        ][]
       ).map(([category, options]) => (
         <YStack key={category}>
           <Text

@@ -9,13 +9,13 @@ import {
   Image,
   Checkbox,
 } from "tamagui";
-import {WardrobeItem} from "@/types/suggestions";
+import {ClothItem} from "@/types/wardrobe";
 import {theme} from "@/theme/theme";
 
 interface ItemSelectorProps {
   isOpen: boolean;
   onClose: () => void;
-  wardrobeItems: WardrobeItem[];
+  wardrobeItems: Record<string, ClothItem>;
   selectedItems: Set<string>;
   onSelectionChange: (newSelection: Set<string>) => void;
 }
@@ -27,16 +27,39 @@ export default function ItemSelector({
   selectedItems,
   onSelectionChange,
 }: ItemSelectorProps) {
-  const itemsByType = wardrobeItems.reduce<Record<string, WardrobeItem[]>>(
-    (acc, item) => {
-      if (!acc[item.clothType]) {
-        acc[item.clothType] = [];
-      }
-      acc[item.clothType].push(item);
-      return acc;
-    },
-    {}
-  );
+  const itemsByType = Object.values(wardrobeItems).reduce<
+    Record<string, ClothItem[]>
+  >((acc, item) => {
+    if (!acc[item.clothType]) {
+      acc[item.clothType] = [];
+    }
+    acc[item.clothType].push(item);
+    return acc;
+  }, {});
+
+  const handleSelectionChange = (
+    item: ClothItem,
+    checked: string | boolean
+  ) => {
+    if (!item.id) return;
+    const isChecked = checked === true || checked === "true";
+
+    console.log(`Item selection changed:`, {
+      id: item.id,
+      checked: isChecked,
+      clothName: item.clothName,
+      clothType: item.clothType,
+    });
+
+    const newSelection = new Set(selectedItems);
+    if (isChecked) {
+      newSelection.add(item.id);
+    } else {
+      newSelection.delete(item.id);
+    }
+    console.log("New selection:", Array.from(newSelection));
+    onSelectionChange(newSelection);
+  };
 
   return (
     <Sheet
@@ -78,21 +101,15 @@ export default function ItemSelector({
                       borderRadius='$4'
                       alignItems='center'>
                       <Checkbox
-                        checked={selectedItems.has(item.id)}
-                        onCheckedChange={(checked) => {
-                          const newSelection = new Set(selectedItems);
-                          if (checked) {
-                            newSelection.add(item.id);
-                          } else {
-                            newSelection.delete(item.id);
-                          }
-                          onSelectionChange(newSelection);
-                        }}
+                        checked={selectedItems.has(item.id!)}
+                        onCheckedChange={(checked) =>
+                          handleSelectionChange(item, checked)
+                        }
                         backgroundColor={
-                          selectedItems.has(item.id) ? theme.accent : undefined
+                          selectedItems.has(item.id!) ? theme.accent : undefined
                         }
                         borderColor={
-                          selectedItems.has(item.id)
+                          selectedItems.has(item.id!)
                             ? theme.accent
                             : theme.border
                         }
