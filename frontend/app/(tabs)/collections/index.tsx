@@ -21,6 +21,8 @@ import {
 } from "@/app/services/collection";
 import {fetchWardrobe} from "@/app/services/uplaodFile";
 import {Ionicons} from "@expo/vector-icons";
+import SuggestionModal from "@/components/SuggestionModal";
+import {SuggestedCollection} from "@/types/suggestions";
 
 interface CollectionItem {
   clothId: string;
@@ -66,6 +68,10 @@ export default function CollectionsScreen() {
   const [collectionToDelete, setCollectionToDelete] =
     useState<Collection | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [selectedItemsForSuggestion, setSelectedItemsForSuggestion] = useState<
+    Set<string>
+  >(new Set());
   const {token, user} = useAuth();
 
   const loadCollections = async () => {
@@ -154,18 +160,35 @@ export default function CollectionsScreen() {
       paddingTop='$6'
       backgroundColor={theme.background}>
       <XStack
+        flexDirection='column'
         justifyContent='space-between'
         alignItems='center'
-        marginBottom='$4'>
-        <Text fontSize='$6' fontWeight='bold' color={theme.text}>
+        marginBottom='$11'>
+        <Text
+          fontSize='$6'
+          fontWeight='bold'
+          color={theme.text}
+          marginBottom='$6'>
           My Collections
         </Text>
-        <Button
-          onPress={() => setIsCreateOpen(true)}
-          backgroundColor={theme.accent}
-          color={theme.text}>
-          Create Collection
-        </Button>
+        <XStack space='$2' flex={1}>
+          <Button
+            fontSize='$4'
+            fontWeight='semibold'
+            onPress={() => setIsCreateOpen(true)}
+            backgroundColor={theme.accent}
+            color={theme.text}>
+            Create Collection
+          </Button>
+          <Button
+            fontSize='$4'
+            fontWeight='semibold'
+            onPress={() => setIsSuggestionsOpen(true)}
+            backgroundColor={theme.buttonBg}
+            color={theme.text}>
+            Suggest Collections
+          </Button>
+        </XStack>
       </XStack>
 
       <ScrollView flex={1}>
@@ -380,6 +403,27 @@ export default function CollectionsScreen() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog>
+
+      {/* Suggestion Modal */}
+      <SuggestionModal
+        isOpen={isSuggestionsOpen}
+        onClose={() => {
+          setIsSuggestionsOpen(false);
+          setSelectedItemsForSuggestion(new Set());
+        }}
+        selectedItems={Array.from(selectedItemsForSuggestion)}
+        wardrobeItems={wardrobeItems}
+        setSelectedItemsForSuggestion={setSelectedItemsForSuggestion}
+        onAcceptSuggestion={async (suggestion: SuggestedCollection) => {
+          try {
+            await createCollection(suggestion.name, suggestion.items, token!);
+            await loadCollections();
+            setIsSuggestionsOpen(false);
+          } catch (error) {
+            console.error("Error creating suggested collection:", error);
+          }
+        }}
+      />
     </YStack>
   );
 }

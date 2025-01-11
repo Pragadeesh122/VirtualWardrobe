@@ -6,6 +6,16 @@ export interface ClothItem {
   userID?: string;
   createdAt: string;
   updatedAt: string;
+  // Additional attributes for suggestion system
+  color?: string;
+  pattern?: string;
+  material?: string;
+  category?: string;
+  attributes?: {
+    season?: string[];
+    occasion?: string[];
+    style?: string[];
+  };
 }
 
 export interface UploadClothItemRequest {

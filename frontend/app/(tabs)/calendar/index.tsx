@@ -43,13 +43,12 @@ const theme = {
 };
 
 export default function CalendarScreen() {
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 0, 1));
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [outfitLogs, setOutfitLogs] = useState<OutfitLog[]>([]);
   const [isAddOutfitOpen, setIsAddOutfitOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
   const {token} = useAuth();
-  const router = useRouter();
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [outfitsForSelectedDate, setOutfitsForSelectedDate] = useState<
     OutfitLog[]
@@ -92,7 +91,7 @@ export default function CalendarScreen() {
   }, [selectedDate, outfitLogs]);
 
   const getDaysInMonth = () => {
-    const year = 2024;
+    const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = endOfMonth(firstDayOfMonth);
@@ -134,17 +133,11 @@ export default function CalendarScreen() {
   };
 
   const handlePreviousMonth = () => {
-    const newDate = subMonths(currentDate, 1);
-    if (newDate.getFullYear() === 2024) {
-      setCurrentDate(newDate);
-    }
+    setCurrentDate(subMonths(currentDate, 1));
   };
 
   const handleNextMonth = () => {
-    const newDate = addMonths(currentDate, 1);
-    if (newDate.getFullYear() === 2024) {
-      setCurrentDate(newDate);
-    }
+    setCurrentDate(addMonths(currentDate, 1));
   };
 
   const handleDeleteOutfit = async (outfitId: string) => {

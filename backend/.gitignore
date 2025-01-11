@@ -1,7 +1,6 @@
 dist
+logs
 node_modules
 firebaseKey.json
 .env
 codebase.md
-logs/*
-logs/.*
