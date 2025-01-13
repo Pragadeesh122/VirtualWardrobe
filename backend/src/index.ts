@@ -12,6 +12,8 @@ import calendarRouter from "./routes/calendar";
 import suggestionRouter from "./routes/suggestion";
 
 const app = express();
+const PORT = parseInt(process.env.PORT || "3000", 10);
+
 app.use(corsMiddleware);
 app.use(express.json());
 app.use(requestLogger);
@@ -25,6 +27,6 @@ app.use("/suggestions", suggestionRouter);
 
 app.use(errorHandler as unknown as express.ErrorRequestHandler);
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
 });

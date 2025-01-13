@@ -10,13 +10,6 @@ export async function generateSuggestions(
   token: string
 ): Promise<GenerateSuggestionResponse> {
   try {
-    console.log("API URL:", API_URL);
-    console.log("Token:", token ? "Present" : "Missing");
-    console.log("Request:", {
-      selectedItems: request.selectedItems,
-      preferences: request.preferences,
-    });
-
     const response = await axios.post(
       `${API_URL}/suggestions/generate`,
       request,
@@ -28,24 +21,13 @@ export async function generateSuggestions(
       }
     );
 
-    console.log("Response status:", response.status);
-    console.log("Response data:", response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error:", {
+      console.error("API Error:", {
         status: error.response?.status,
         data: error.response?.data,
-        message: error.message,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          headers: error.config?.headers,
-          data: error.config?.data,
-        },
       });
-    } else {
-      console.error("Generate suggestions error:", error);
     }
     throw error;
   }

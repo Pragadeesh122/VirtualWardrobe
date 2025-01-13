@@ -30,6 +30,7 @@ import {Collection} from "@/types/collection";
 import {fetchCollections} from "@/app/services/collection";
 import {Link, useRouter} from "expo-router";
 import {TouchableOpacity} from "react-native";
+import {CalendarSkeleton} from "@/components/skeleton";
 
 const theme = {
   background: "#1A1B23",
@@ -50,6 +51,7 @@ export default function CalendarScreen() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const {token} = useAuth();
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [outfitsForSelectedDate, setOutfitsForSelectedDate] = useState<
     OutfitLog[]
   >([]);
@@ -62,6 +64,8 @@ export default function CalendarScreen() {
           setOutfitLogs(logs);
         } catch (error) {
           console.error("Error fetching outfit logs:", error);
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -160,6 +164,10 @@ export default function CalendarScreen() {
       setLoadingDelete(false);
     }
   };
+
+  if (loading) {
+    return <CalendarSkeleton />;
+  }
 
   return (
     <YStack flex={1} backgroundColor={theme.background}>

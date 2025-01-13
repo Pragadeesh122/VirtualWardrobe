@@ -23,6 +23,7 @@ import {fetchWardrobe} from "@/app/services/uplaodFile";
 import {Ionicons} from "@expo/vector-icons";
 import SuggestionModal from "@/components/SuggestionModal";
 import {ClothItem} from "@/types/wardrobe";
+import {CollectionsSkeleton} from "@/components/skeleton";
 
 interface CollectionItem {
   clothId: string;
@@ -64,6 +65,7 @@ export default function CollectionsScreen() {
     useState<Collection | null>(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedItemsForSuggestion, setSelectedItemsForSuggestion] = useState<
     Set<string>
   >(new Set());
@@ -75,6 +77,8 @@ export default function CollectionsScreen() {
       setCollections(data);
     } catch (error) {
       console.error("Error loading collections:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,6 +123,10 @@ export default function CollectionsScreen() {
     loadCollections();
     loadWardrobe();
   }, [token]);
+
+  if (isLoading) {
+    return <CollectionsSkeleton />;
+  }
 
   const handleCreateCollection = async () => {
     console.log("[CollectionsScreen] Starting collection creation");

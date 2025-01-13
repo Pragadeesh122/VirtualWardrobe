@@ -2,6 +2,7 @@ import {userRegister} from "@/app/services/auth";
 import {Link, router} from "expo-router";
 import {useState} from "react";
 import {YStack, Input, Button, Text} from "tamagui";
+import {AuthSkeleton} from "@/components/skeleton";
 
 export default function Register() {
   const [email, setEmail] = useState<string>("");
@@ -12,11 +13,14 @@ export default function Register() {
   async function handleRegister() {
     setLoading(true);
     const response = await userRegister(username, email, password);
-    console.log(response);
     if (response.success) {
       router.push("/login");
     }
     setLoading(false);
+  }
+
+  if (loading) {
+    return <AuthSkeleton />;
   }
 
   return (

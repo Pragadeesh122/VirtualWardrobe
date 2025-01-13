@@ -1,6 +1,7 @@
 import React from "react";
 import {YStack, Text, XStack, Button} from "tamagui";
 import {SuggestionPreferences} from "@/types/suggestions";
+import {PreferencesSelectorSkeleton} from "./skeleton";
 
 interface PreferencesSelectorProps {
   preferences: SuggestionPreferences;
@@ -9,13 +10,19 @@ interface PreferencesSelectorProps {
     value: string
   ) => void;
   preferenceOptions: Record<keyof SuggestionPreferences, readonly string[]>;
+  isLoading?: boolean;
 }
 
 export default function PreferencesSelector({
   preferences,
   onPreferenceChange,
   preferenceOptions,
+  isLoading = false,
 }: PreferencesSelectorProps) {
+  if (isLoading) {
+    return <PreferencesSelectorSkeleton />;
+  }
+
   return (
     <YStack space='$4'>
       {(

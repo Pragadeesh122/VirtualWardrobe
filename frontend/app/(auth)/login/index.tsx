@@ -3,6 +3,7 @@ import {YStack, Input, Button, Text} from "tamagui";
 import {useAuth} from "@/context/authContext";
 import {router} from "expo-router";
 import {userLogin} from "@/app/services/auth";
+import {AuthSkeleton} from "@/components/skeleton";
 
 export default function LoginScreen() {
   const {login} = useAuth();
@@ -17,6 +18,10 @@ export default function LoginScreen() {
       router.push("/");
     }
     setLoading(false);
+  }
+
+  if (loading) {
+    return <AuthSkeleton />;
   }
 
   return (

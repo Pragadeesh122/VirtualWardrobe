@@ -2,6 +2,7 @@ import React from "react";
 import {ScrollView, XStack, Text, Image, Button, YStack} from "tamagui";
 import {Ionicons} from "@expo/vector-icons";
 import {theme} from "@/theme/theme";
+import {SelectedItemsPreviewSkeleton} from "./skeleton";
 
 interface SelectedItemsPreviewProps {
   items: Array<{
@@ -14,6 +15,7 @@ interface SelectedItemsPreviewProps {
   onClearSelection: () => void;
   totalItems: number;
   onSelectItems: () => void;
+  isLoading?: boolean;
 }
 
 export default function SelectedItemsPreview({
@@ -23,7 +25,12 @@ export default function SelectedItemsPreview({
   onClearSelection,
   totalItems,
   onSelectItems,
+  isLoading = false,
 }: SelectedItemsPreviewProps) {
+  if (isLoading) {
+    return <SelectedItemsPreviewSkeleton />;
+  }
+
   return (
     <YStack space='$2'>
       <XStack justifyContent='space-between' alignItems='center'>
