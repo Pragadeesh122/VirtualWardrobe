@@ -42,37 +42,91 @@ const STORAGE_KEYS = {
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({children}) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const isTokenExpired = useCallback((token: string) => {
     try {
       const decodedToken: any = jwtDecode(token);
-      console.log("token", token);
-      console.log("decodedToken", decodedToken);
       const currentTime = Date.now() / 1000;
-      console.log(decodedToken.exp, currentTime);
-      return decodedToken.exp < currentTime;
+      // Add a 5-minute buffer to refresh the token before it actually expires
+      return decodedToken.exp - currentTime < 300; // 5 minutes in seconds
     } catch {
       return true;
     }
   }, []);
 
-  if (isTokenExpired(token!)) {
+  const refreshTokenFn = useCallback(async () => {
     try {
-      async function refreshTokenFn() {
-        const storedRefreshToken = await AsyncStorage.getItem(
+      let currentRefreshToken = refreshToken;
+
+      // If no refresh token in state, try to get it from storage
+      if (!currentRefreshToken) {
+        currentRefreshToken = await AsyncStorage.getItem(
           STORAGE_KEYS.REFRESH_TOKEN
         );
-        const response = await axios.post(`${API_URL}/auth/refresh`, {
-          refreshToken: storedRefreshToken,
-        });
-        console.log("New Token", response.data);
       }
-      refreshTokenFn();
+
+      if (!currentRefreshToken) {
+        throw new Error("No refresh token available");
+      }
+
+      const response = await axios.post(`${API_URL}/auth/refresh`, {
+        refreshToken: currentRefreshToken,
+      });
+
+      const {
+        token: newToken,
+        refreshToken: newRefreshToken,
+        user: userData,
+      } = response.data;
+
+      await Promise.all([
+        AsyncStorage.setItem(STORAGE_KEYS.TOKEN, newToken),
+        AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken),
+        AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData)),
+      ]);
+
+      setToken(newToken);
+      setRefreshToken(newRefreshToken);
+      setUser(userData);
+
+      return newToken;
     } catch (error) {
       console.error("Failed to refresh token:", error);
+      // If refresh fails, log the user out
+      await logout();
+      throw error;
     }
-  }
+  }, [refreshToken]);
+
+  // Check token expiration and refresh if needed
+  useEffect(() => {
+    let refreshInterval: NodeJS.Timeout;
+
+    const checkAndRefreshToken = async () => {
+      if (token && isTokenExpired(token)) {
+        try {
+          await refreshTokenFn();
+        } catch (error) {
+          console.error("Token refresh failed:", error);
+        }
+      }
+    };
+
+    if (token) {
+      // Check immediately
+      checkAndRefreshToken();
+      // Then set up interval to check every minute
+      refreshInterval = setInterval(checkAndRefreshToken, 60000);
+    }
+
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+  }, [token, isTokenExpired, refreshTokenFn]);
 
   useEffect(() => {
     const loadStoredAuth = async () => {
@@ -85,9 +139,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({children}) => {
           ]
         );
 
-        if (storedToken && storedUser) {
+        if (storedToken && storedUser && storedRefreshToken) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
+          setRefreshToken(storedRefreshToken);
         }
       } catch (error) {
         console.error("Failed to load auth info:", error);
@@ -100,18 +155,19 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({children}) => {
   }, []);
 
   const login = useCallback(
-    async (newToken: string, newUser: UserProfile, refreshToken: string) => {
+    async (newToken: string, newUser: UserProfile, newRefreshToken: string) => {
       try {
         const storagePromises = [
           AsyncStorage.setItem(STORAGE_KEYS.TOKEN, newToken),
           AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser)),
-          AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
+          AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken),
         ];
 
         await Promise.all(storagePromises);
 
         setToken(newToken);
         setUser(newUser);
+        setRefreshToken(newRefreshToken);
       } catch (error) {
         console.error("Failed to save auth info:", error);
         throw new Error("Failed to login");
@@ -132,6 +188,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({children}) => {
 
       setToken(null);
       setUser(null);
+      setRefreshToken(null);
     } catch (error) {
       console.error("Failed to remove auth info:", error);
       throw new Error("Failed to logout");
@@ -155,7 +212,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({children}) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("The user is not authenticated! Please login.");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
